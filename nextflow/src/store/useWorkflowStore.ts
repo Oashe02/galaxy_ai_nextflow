@@ -21,6 +21,7 @@ interface WorkflowState {
     onNodesChange: OnNodesChange;
     onEdgesChange: OnEdgesChange;
     onConnect: OnConnect;
+    onSelectionChange: (params: { nodes: Node[]; edges: Edge[] }) => void;
     setNodes: (nodes: Node[]) => void;
     setEdges: (edges: Edge[]) => void;
     addNode: (node: Node) => void;
@@ -48,8 +49,17 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
 
     onConnect: (connection: Connection) => {
         set({
-            edges: addEdge({ ...connection, animated: true, style: { stroke: '#8B5CF6' } }, get().edges),
+            edges: addEdge({
+                ...connection,
+                animated: true,
+                style: { stroke: '#8B5CF6', strokeWidth: 2.5 },
+                type: 'smoothstep'
+            }, get().edges),
         });
+    },
+
+    onSelectionChange: ({ nodes }) => {
+        set({ selectedNodes: nodes.map(n => n.id) });
     },
 
     setNodes: (nodes) => set({ nodes }),
