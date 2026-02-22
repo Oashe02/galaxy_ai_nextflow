@@ -1,4 +1,4 @@
-import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, ClerkLoaded, ClerkLoading } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -23,31 +23,38 @@ export default function Home() {
             Secure your routes and manage users with ease.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <SignedIn>
-            <Link
-              href="/workflow"
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-zinc-900 px-8 text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200 md:w-auto"
+        
+        <ClerkLoaded>
+          <div className="flex flex-col gap-4 text-base font-medium sm:flex-row min-h-[48px]">
+            <SignedIn>
+              <Link
+                href="/workflow"
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-zinc-900 px-8 text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200 md:w-auto"
+              >
+                Go to Workflow
+              </Link>
+            </SignedIn>
+            <SignedOut>
+              <SignInButton mode="modal">
+                <button className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-zinc-900 px-8 text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200 md:w-auto cursor-pointer">
+                  Get Started
+                </button>
+              </SignInButton>
+            </SignedOut>
+            <a
+              className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-zinc-200 px-8 transition-colors hover:border-zinc-900 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900 dark:hover:border-zinc-100 md:w-auto"
+              href="https://clerk.com/docs"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              Go to Workflow
-            </Link>
-          </SignedIn>
-          <SignedOut>
-            <SignInButton mode="modal">
-              <button className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-zinc-900 px-8 text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200 md:w-auto cursor-pointer">
-                Get Started
-              </button>
-            </SignInButton>
-          </SignedOut>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-zinc-200 px-8 transition-colors hover:border-zinc-900 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900 dark:hover:border-zinc-100 md:w-auto"
-            href="https://clerk.com/docs"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Clerk Docs
-          </a>
-        </div>
+              Clerk Docs
+            </a>
+          </div>
+        </ClerkLoaded>
+        
+        <ClerkLoading>
+          <div className="flex h-12 w-32 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-900 animate-pulse" />
+        </ClerkLoading>
       </main>
     </div>
   );

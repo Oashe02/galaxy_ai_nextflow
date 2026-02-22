@@ -1,26 +1,98 @@
 @import "tailwindcss";
+@import "@xyflow/react/dist/style.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #000000;
+  --foreground: #ffffff;
+  --accent: #8B5CF6; /* Krea-like purple */
+  --card-bg: #0A0A0A;
+  --card-border: #1F1F1F;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-card: var(--card-bg);
+  --color-border: var(--card-border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Geist Sans', system-ui, -apple-system, sans-serif;
+  overflow: hidden; /* Canvas app should not scroll body */
+}
+
+/* React Flow Customizations */
+.react-flow__background {
+  background-color: var(--background);
+}
+
+.react-flow__node {
+  border-radius: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: white;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.react-flow__node.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.5);
+}
+
+.react-flow__handle {
+  width: 10px;
+  height: 10px;
+  background: #3F3F46;
+  border: 2px solid var(--card-bg);
+}
+
+.react-flow__handle:hover {
+  background: var(--accent);
+}
+
+.react-flow__edge-path {
+  stroke-width: 2.5;
+  transition: stroke 0.3s ease;
+}
+
+.react-flow__minimap {
+  background-color: var(--card-bg) !important;
+  border-radius: 12px;
+  border: 1px solid var(--card-border) !important;
+  overflow: hidden;
+}
+
+.react-flow__controls {
+  box-shadow: none !important;
+  border: 1px solid var(--card-border) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  background: var(--card-bg) !important;
+}
+
+.react-flow__controls-button {
+  background: transparent !important;
+  border-bottom: 1px solid var(--card-border) !important;
+  color: #71717A !important;
+  fill: currentColor !important;
+}
+
+.react-flow__controls-button:hover {
+  background: #18181B !important;
+  color: white !important;
+}
+
+/* Krea-like glassmorphism for panels */
+.glass-panel {
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
