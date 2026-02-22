@@ -7,8 +7,8 @@ import React, {
   useContext,
 } from "react";
 import {
-  IconArrowNarrowLeft,
-  IconArrowNarrowRight,
+  IconChevronLeft,
+  IconChevronRight,
   IconX,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
@@ -71,7 +71,7 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
 
   const handleCardClose = (index: number) => {
     if (carouselRef.current) {
-      const cardWidth = isMobile() ? 224 : 288; 
+      const cardWidth = isMobile() ? 320 : 420; 
       const gap = isMobile() ? 4 : 8;
       const scrollPosition = (cardWidth + gap) * (index + 1);
       carouselRef.current.scrollTo({
@@ -137,14 +137,14 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
             onClick={scrollLeft}
             disabled={!canScrollLeft}
           >
-            <IconArrowNarrowLeft className="h-6 w-6 text-gray-500" />
+            <IconChevronLeft className="h-6 w-6 text-gray-500" />
           </button>
           <button
             className="relative z-40 flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
             onClick={scrollRight}
             disabled={!canScrollRight}
           >
-            <IconArrowNarrowRight className="h-6 w-6 text-gray-500" />
+            <IconChevronRight className="h-6 w-6 text-gray-500" />
           </button>
         </div>
       </div>
