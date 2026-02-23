@@ -12,7 +12,7 @@ import {
   type NodeMouseHandler,
   type IsValidConnection,
 } from '@xyflow/react';
-import { useWorkflowStore, getHandleType } from '@/store/useWorkflowStore';
+import { useWorkflowStore, getHandleType, wouldCreateCycle } from '@/store/useWorkflowStore';
 import { Maximize, MousePointer2, Trash2, Copy } from 'lucide-react';
 import { 
   TextNode, 
@@ -46,15 +46,16 @@ export default function WorkflowCanvas() {
     extractFrame: ExtractFrameNode,
   }), []);
 
-  // type-safe connection validation
   const checkConnection: IsValidConnection = useCallback((conn) => {
     const src = nodes.find(n => n.id === conn.source);
     const tgt = nodes.find(n => n.id === conn.target);
     if (!src || !tgt || !conn.sourceHandle || !conn.targetHandle) return false;
     const from = getHandleType(src.type ?? '', conn.sourceHandle);
     const to = getHandleType(tgt.type ?? '', conn.targetHandle);
-    return from === to || from === 'any' || to === 'any';
-  }, [nodes]);
+    if (from !== to && from !== 'any' && to !== 'any') return false;
+    if (wouldCreateCycle(edges, conn.source, conn.target)) return false;
+    return true;
+  }, [nodes, edges]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

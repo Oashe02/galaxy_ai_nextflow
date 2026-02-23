@@ -48,6 +48,27 @@ export function getHandleType(nodeType: string, handleId: string): string {
     return HANDLE_TYPES[nodeType]?.[handleId] ?? 'any';
 }
 
+export function wouldCreateCycle(edges: Edge[], source: string, target: string): boolean {
+    const adj = new Map<string, string[]>();
+    for (const e of edges) {
+        if (!adj.has(e.source)) adj.set(e.source, []);
+        adj.get(e.source)!.push(e.target);
+    }
+    if (!adj.has(source)) adj.set(source, []);
+    adj.get(source)!.push(target);
+    const visited = new Set<string>();
+    const stack = [target];
+    while (stack.length > 0) {
+        const node = stack.pop()!;
+        if (node === source) return true;
+        if (visited.has(node)) continue;
+        visited.add(node);
+        const neighbors = adj.get(node) ?? [];
+        for (const next of neighbors) stack.push(next);
+    }
+    return false;
+}
+
 interface Store {
     nodes: Node[];
     edges: Edge[];
@@ -131,15 +152,14 @@ export const useWorkflowStore = create<Store>()(
         },
 
         handleConnect: (conn: Connection) => {
-            // type-safe check before connecting
-            const { nodes } = get();
+            const { nodes, edges } = get();
             const src = nodes.find(n => n.id === conn.source);
             const tgt = nodes.find(n => n.id === conn.target);
             if (!src || !tgt || !conn.sourceHandle || !conn.targetHandle) return;
-
             const srcType = getHandleType(src.type ?? '', conn.sourceHandle);
             const tgtType = getHandleType(tgt.type ?? '', conn.targetHandle);
             if (srcType !== tgtType && srcType !== 'any' && tgtType !== 'any') return;
+            if (wouldCreateCycle(edges, conn.source, conn.target)) return;
 
             set({
                 edges: addEdge({
@@ -147,7 +167,7 @@ export const useWorkflowStore = create<Store>()(
                     animated: true,
                     style: { stroke: '#8B5CF6', strokeWidth: 2.5 },
                     type: 'smoothstep',
-                }, get().edges),
+                }, edges),
             });
         },
 
