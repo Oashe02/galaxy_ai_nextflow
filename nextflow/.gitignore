@@ -42,3 +42,5 @@ next-env.d.ts
 
 # trigger.dev
 .trigger/
+
+/src/generated/prisma

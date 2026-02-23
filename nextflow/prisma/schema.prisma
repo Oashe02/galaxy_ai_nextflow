@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+model Workflow {
+  id        String   @id @default(uuid())
+  userId    String   // Clerk user ID
+  name      String
+  desc      String?
+  nodes     Json     // React Flow nodes
+  edges     Json     // React Flow edges
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  runs      WorkflowRun[]
+
+  @@index([userId])
+}
+
+model WorkflowRun {
+  id         String   @id @default(uuid())
+  workflowId String
+  userId     String   // Clerk user ID
+  status     String   // success, failed, partial
+  runType    String   // full, single, partial
+  duration   Int      // in ms
+  nodes      Json     // Array of node execution results
+  createdAt  DateTime @default(now())
+  workflow   Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@index([workflowId])
+  @@index([userId])
+}

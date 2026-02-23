@@ -5,7 +5,7 @@ import {
   Upload, Play, Loader2, Check, AlertCircle,
   ChevronDown
 } from 'lucide-react';
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 export function TextNode({ id, data, selected }: any) {
   const updateNode = useWorkflowStore((s) => s.updateNode);
 
@@ -267,6 +267,12 @@ export function LLMNode({ id, data, selected }: any) {
     }
   }, [id, data, setRunState, updateNode]);
 
+  useEffect(() => {
+    const handler = (e: any) => { if (e.detail?.id === id) handleRun(); };
+    window.addEventListener('node:run', handler);
+    return () => window.removeEventListener('node:run', handler);
+  }, [id, handleRun]);
+
   const statusConfig = {
     idle: { color: 'text-zinc-500', icon: null },
     queued: { color: 'text-yellow-400', icon: <Loader2 className="w-3 h-3 animate-spin" /> },
@@ -432,6 +438,12 @@ export function CropImageNode({ id, data, selected }: any) {
       updateNode(id, { result: err.message });
     }
   }, [id, data, setRunState, updateNode]);
+
+  useEffect(() => {
+    const handler = (e: any) => { if (e.detail?.id === id) handleRun(); };
+    window.addEventListener('node:run', handler);
+    return () => window.removeEventListener('node:run', handler);
+  }, [id, handleRun]);
 
   const statusConfig = {
     idle: { color: 'text-zinc-500', icon: null },
@@ -606,6 +618,12 @@ export function ExtractFrameNode({ id, data, selected }: any) {
       updateNode(id, { result: err.message });
     }
   }, [id, data, setRunState, updateNode]);
+
+  useEffect(() => {
+    const handler = (e: any) => { if (e.detail?.id === id) handleRun(); };
+    window.addEventListener('node:run', handler);
+    return () => window.removeEventListener('node:run', handler);
+  }, [id, handleRun]);
 
   const statusConfig = {
     idle: { color: 'text-zinc-500', icon: null },
