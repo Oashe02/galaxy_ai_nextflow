@@ -4,7 +4,7 @@ import { useState } from "react";
 import { SignedIn, SignedOut, SignUpButton, ClerkLoaded, ClerkLoading } from "@clerk/nextjs";
 import Link from "next/link";
 import { UserPlus, ArrowRight, Layout } from "lucide-react";
-import { AppleCardsCarouselDemo } from "@/components/layout/AppleCardsCarouselDemo";
+import { AppleCardsCarouselDemo } from "@/components/layout/AppleCardsCarousel";
 
 export default function Home() {
   const [activeWord, setActiveWord] = useState<'scratch' | 'character' | null>(null);

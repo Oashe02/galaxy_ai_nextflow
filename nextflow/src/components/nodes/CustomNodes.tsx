@@ -46,12 +46,16 @@ export function UploadImageNode({ id, data, selected }: any) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const url = URL.createObjectURL(file);
-    updateNode(id, { 
-      imageUrl: url, 
-      fileName: file.name,
-      fileSize: (file.size / 1024).toFixed(1) + ' KB',
-    });
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const url = e.target?.result as string;
+      updateNode(id, { 
+        imageUrl: url, 
+        fileName: file.name,
+        fileSize: (file.size / 1024).toFixed(1) + ' KB',
+      });
+    };
+    reader.readAsDataURL(file);
   }, [id, updateNode]);
 
   const handleRemove = useCallback(() => {
@@ -121,12 +125,16 @@ export function UploadVideoNode({ id, data, selected }: any) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const url = URL.createObjectURL(file);
-    updateNode(id, { 
-      videoUrl: url, 
-      fileName: file.name,
-      fileSize: (file.size / (1024 * 1024)).toFixed(1) + ' MB',
-    });
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const url = e.target?.result as string;
+      updateNode(id, { 
+        videoUrl: url, 
+        fileName: file.name,
+        fileSize: (file.size / (1024 * 1024)).toFixed(1) + ' MB',
+      });
+    };
+    reader.readAsDataURL(file);
   }, [id, updateNode]);
 
   const handleRemove = useCallback(() => {
@@ -204,15 +212,36 @@ export function LLMNode({ id, data, selected }: any) {
   const handleRun = useCallback(async () => {
     setRunState(id, 'running');
     updateNode(id, { result: '' });
+
+    const store = useWorkflowStore.getState();
+    const incomingEdges = store.edges.filter((e) => e.target === id);
+    let sysPrompt = data.system_prompt || '';
+    let userMsg = data.user_message || '';
+    const images: string[] = [];
+
+    incomingEdges.forEach((e) => {
+      const srcNode = store.nodes.find((n) => n.id === e.source);
+      if (!srcNode) return;
+      if (e.targetHandle === 'system_prompt') {
+        sysPrompt = (srcNode.data.result || srcNode.data.text || sysPrompt) as string;
+      } else if (e.targetHandle === 'user_message') {
+        userMsg = (srcNode.data.result || srcNode.data.text || userMsg) as string;
+      } else if (e.targetHandle === 'images') {
+        const img = (srcNode.data.result || srcNode.data.imageUrl) as string;
+        if (img) images.push(img);
+      }
+    });
+
     try {
       const res = await fetch('/api/run-llm', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: data.model || 'gemini-2.0-flash',
-          userMessage: data.user_message || 'Hello',
-          systemPrompt: data.system_prompt,
+          userMessage: userMsg || 'Hello',
+          systemPrompt: sysPrompt,
           temperature: data.temperature ?? 0.7,
+          images: images.length > 0 ? images : undefined,
         }),
       });
       const { id: runId, error } = await res.json();
@@ -229,7 +258,7 @@ export function LLMNode({ id, data, selected }: any) {
         } else if (run.status === 'FAILED' || run.status === 'CRASHED') {
           clearInterval(poll);
           setRunState(id, 'failed');
-          updateNode(id, { result: run.output?.error || 'Task failed' });
+          updateNode(id, { result: run.error?.message || run.output?.error || 'Task failed' });
         }
       }, 2000);
     } catch (err: any) {
@@ -343,12 +372,74 @@ export function LLMNode({ id, data, selected }: any) {
 
 export function CropImageNode({ id, data, selected }: any) {
   const updateNode = useWorkflowStore((s) => s.updateNode);
+  const setRunState = useWorkflowStore((s) => s.setRunState);
+  const nodeStatus: import('@/store/useWorkflowStore').RunStatus = useWorkflowStore((s) => s.runState[id] || 'idle');
+  
   const handleValueChange = useCallback((field: string, value: string) => {
     const num = parseFloat(value);
     if (!isNaN(num) && num >= 0 && num <= 100) {
       updateNode(id, { [field]: num });
     }
   }, [id, updateNode]);
+
+  const handleRun = useCallback(async () => {
+    setRunState(id, 'running');
+    updateNode(id, { result: '' });
+
+    const store = useWorkflowStore.getState();
+    const incomingEdges = store.edges.filter((e) => e.target === id);
+    let imageUrl = data.image || '';
+
+    incomingEdges.forEach((e) => {
+      const srcNode = store.nodes.find((n) => n.id === e.source);
+      if (!srcNode) return;
+      if (e.targetHandle === 'image') {
+        imageUrl = (srcNode.data.result || srcNode.data.imageUrl || imageUrl) as string;
+      }
+    });
+
+    try {
+      const res = await fetch('/api/crop-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imageUrl: imageUrl,
+          x: data.cropX ?? 0,
+          y: data.cropY ?? 0,
+          w: data.cropW ?? 100,
+          h: data.cropH ?? 100,
+        }),
+      });
+      const { id: runId, error } = await res.json();
+      if (error) throw new Error(error);
+
+      // poll for result
+      const poll = setInterval(async () => {
+        const statusRes = await fetch(`/api/run-status?id=${runId}`);
+        const run = await statusRes.json();
+        if (run.status === 'COMPLETED') {
+          clearInterval(poll);
+          setRunState(id, 'success');
+          updateNode(id, { result: run.output?.dataUrl || 'Done' });
+        } else if (run.status === 'FAILED' || run.status === 'CRASHED') {
+          clearInterval(poll);
+          setRunState(id, 'failed');
+          updateNode(id, { result: run.error?.message || run.output?.error || 'Task failed' });
+        }
+      }, 2000);
+    } catch (err: any) {
+      setRunState(id, 'failed');
+      updateNode(id, { result: err.message });
+    }
+  }, [id, data, setRunState, updateNode]);
+
+  const statusConfig = {
+    idle: { color: 'text-zinc-500', icon: null },
+    queued: { color: 'text-yellow-400', icon: <Loader2 className="w-3 h-3 animate-spin" /> },
+    running: { color: 'text-orange-400', icon: <Loader2 className="w-3 h-3 animate-spin" /> },
+    success: { color: 'text-green-400', icon: <Check className="w-3 h-3" /> },
+    failed: { color: 'text-red-400', icon: <AlertCircle className="w-3 h-3" /> },
+  };
 
   const cropFields = [
     { key: 'cropX', label: 'X', defaultVal: 0, desc: 'Left offset' },
@@ -418,6 +509,45 @@ export function CropImageNode({ id, data, selected }: any) {
             </button>
           ))}
         </div>
+        <button 
+          className="w-full py-2 bg-orange-600 hover:bg-orange-500 text-white rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 mt-2"
+          disabled={nodeStatus === 'running'}
+          onClick={handleRun}
+        >
+          {nodeStatus === 'running' ? (
+            <>
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            <>
+              <Play className="w-3.5 h-3.5 fill-current" />
+              Run Crop
+            </>
+          )}
+        </button>
+        <div className="space-y-1.5 mt-2">
+          <div className="flex items-center justify-between">
+            <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Output</label>
+            {nodeStatus !== 'idle' && (
+              <div className={`flex items-center gap-1 ${statusConfig[nodeStatus].color}`}>
+                {statusConfig[nodeStatus].icon}
+                <span className="text-[9px] font-bold uppercase">{nodeStatus}</span>
+              </div>
+            )}
+          </div>
+          <div className="min-h-[60px] bg-zinc-950 border border-zinc-800 rounded-lg p-2.5 flex items-center justify-center overflow-hidden">
+            {data.result ? (
+              data.result.startsWith('data:image') ? (
+                <img src={data.result} alt="Cropped result" className="rounded-md max-h-32 object-contain" />
+              ) : (
+                <p className="text-xs text-red-400 leading-relaxed text-center p-2">{data.result}</p>
+              )
+            ) : (
+              <p className="text-zinc-700 italic text-[10px]">Result will appear here...</p>
+            )}
+          </div>
+        </div>
       </div>
     </BaseNode>
   );
@@ -425,6 +555,65 @@ export function CropImageNode({ id, data, selected }: any) {
 
 export function ExtractFrameNode({ id, data, selected }: any) {
   const updateNode = useWorkflowStore((s) => s.updateNode);
+  const setRunState = useWorkflowStore((s) => s.setRunState);
+  const nodeStatus: import('@/store/useWorkflowStore').RunStatus = useWorkflowStore((s) => s.runState[id] || 'idle');
+
+  const handleRun = useCallback(async () => {
+    setRunState(id, 'running');
+    updateNode(id, { result: '' });
+
+    const store = useWorkflowStore.getState();
+    const incomingEdges = store.edges.filter((e) => e.target === id);
+    let videoUrl = data.video || '';
+
+    incomingEdges.forEach((e) => {
+      const srcNode = store.nodes.find((n) => n.id === e.source);
+      if (!srcNode) return;
+      if (e.targetHandle === 'video') {
+        videoUrl = (srcNode.data.result || srcNode.data.videoUrl || videoUrl) as string;
+      }
+    });
+
+    try {
+      const res = await fetch('/api/extract-frame', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          videoUrl: videoUrl,
+          timestamp: data.timestamp ?? 0,
+          timestampUnit: data.timestampUnit || 'sec',
+        }),
+      });
+      const { id: runId, error } = await res.json();
+      if (error) throw new Error(error);
+
+      // poll for result
+      const poll = setInterval(async () => {
+        const statusRes = await fetch(`/api/run-status?id=${runId}`);
+        const run = await statusRes.json();
+        if (run.status === 'COMPLETED') {
+          clearInterval(poll);
+          setRunState(id, 'success');
+          updateNode(id, { result: run.output?.dataUrl || 'Done' });
+        } else if (run.status === 'FAILED' || run.status === 'CRASHED') {
+          clearInterval(poll);
+          setRunState(id, 'failed');
+          updateNode(id, { result: run.error?.message || run.output?.error || 'Task failed' });
+        }
+      }, 2000);
+    } catch (err: any) {
+      setRunState(id, 'failed');
+      updateNode(id, { result: err.message });
+    }
+  }, [id, data, setRunState, updateNode]);
+
+  const statusConfig = {
+    idle: { color: 'text-zinc-500', icon: null },
+    queued: { color: 'text-yellow-400', icon: <Loader2 className="w-3 h-3 animate-spin" /> },
+    running: { color: 'text-cyan-400', icon: <Loader2 className="w-3 h-3 animate-spin" /> },
+    success: { color: 'text-green-400', icon: <Check className="w-3 h-3" /> },
+    failed: { color: 'text-red-400', icon: <AlertCircle className="w-3 h-3" /> },
+  };
 
   return (
     <BaseNode
@@ -473,15 +662,44 @@ export function ExtractFrameNode({ id, data, selected }: any) {
             </button>
           ))}
         </div>
-        <div className="space-y-1.5">
-          <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Frame Preview</label>
-          <div className="h-20 bg-zinc-950 border border-zinc-800 rounded-lg flex items-center justify-center">
-            {data.frameUrl ? (
-              <img src={data.frameUrl} alt="Frame" className="w-full h-full object-cover rounded-lg" />
+        <button 
+          className="w-full py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 mt-2"
+          disabled={nodeStatus === 'running'}
+          onClick={handleRun}
+        >
+          {nodeStatus === 'running' ? (
+            <>
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            <>
+              <Play className="w-3.5 h-3.5 fill-current" />
+              Extract Frame
+            </>
+          )}
+        </button>
+        <div className="space-y-1.5 mt-2">
+          <div className="flex items-center justify-between">
+            <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Frame Preview</label>
+            {nodeStatus !== 'idle' && (
+              <div className={`flex items-center gap-1 ${statusConfig[nodeStatus].color}`}>
+                {statusConfig[nodeStatus].icon}
+                <span className="text-[9px] font-bold uppercase">{nodeStatus}</span>
+              </div>
+            )}
+          </div>
+          <div className="min-h-[80px] bg-zinc-950 border border-zinc-800 rounded-lg flex items-center justify-center overflow-hidden">
+            {data.result ? (
+              data.result.startsWith('data:image') ? (
+                <img src={data.result} alt="Frame" className="w-full h-full object-cover rounded-lg" />
+              ) : (
+                <p className="text-xs text-red-400 leading-relaxed text-center p-2">{data.result}</p>
+              )
             ) : (
               <div className="text-center">
                 <Film className="w-5 h-5 text-zinc-800 mx-auto mb-1" />
-                <p className="text-[9px] text-zinc-700 font-medium">Connect a video to extract</p>
+                <p className="text-[9px] text-zinc-700 font-medium">Result will appear here...</p>
               </div>
             )}
           </div>

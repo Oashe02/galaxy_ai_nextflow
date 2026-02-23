@@ -14,6 +14,7 @@ export async function GET(req: NextRequest) {
             id: run.id,
             status: run.status,
             output: run.output,
+            error: run.error,
             finishedAt: run.finishedAt,
         });
     } catch (err: any) {
