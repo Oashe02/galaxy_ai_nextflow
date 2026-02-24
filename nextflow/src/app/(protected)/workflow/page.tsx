@@ -398,7 +398,7 @@ export default function WorkflowPage() {
             </div>
           </main>
 
-          <aside className="w-[340px] border-l border-white/5 flex flex-col bg-black/40 backdrop-blur-3xl z-20 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]">
+          <aside className="w-[280px] border-l border-white/5 flex flex-col bg-black/40 backdrop-blur-3xl z-20 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]">
             <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">

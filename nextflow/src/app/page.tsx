@@ -5,6 +5,9 @@ import { SignedIn, SignedOut, SignUpButton, ClerkLoaded, ClerkLoading } from "@c
 import Link from "next/link";
 import { UserPlus, ArrowRight, Layout } from "lucide-react";
 import { AppleCardsCarouselDemo } from "@/components/layout/AppleCardsCarousel";
+import { ModelLogos } from "@/components/layout/ModelLogos";
+import { BentoGrid } from "@/components/layout/BentoGrid";
+import { Footer } from "@/components/layout/Footer";
 
 export default function Home() {
   const [activeWord, setActiveWord] = useState<'scratch' | 'character' | null>(null);
@@ -79,9 +82,19 @@ export default function Home() {
           Workflow showing image generation, video animation, asset management, and video upscaling in NextFlow.
         </p>
 
-        <section className="mb-32">
+        <section className="mb-0">
           <AppleCardsCarouselDemo />
         </section>
+
+        <section className="mb-0">
+          <ModelLogos />
+        </section>
+
+        <section className="mb-0">
+          <BentoGrid />
+        </section>
+
+        <Footer />
       </main>
     </div>
   );

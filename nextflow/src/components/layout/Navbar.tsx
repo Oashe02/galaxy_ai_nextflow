@@ -62,15 +62,17 @@ export function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 h-20 flex items-center px-8 bg-black/80 backdrop-blur-md border-b border-white/15 z-[100]">
-      <div className="flex-1 flex items-center h-full">
+      <div className="flex-1 flex items-center">
         <Link href="/" className="flex items-center gap-2 group">
-          {mounted ? (
-            <div className="text-xl font-black tracking-tighter text-white select-none">
-              NEXT<span className="text-purple-500">FLOW</span>
-            </div>
-          ) : (
-            <div className="w-8 h-8 bg-white/10 rounded-lg animate-pulse" />
-          )}
+          <div className="flex items-center" suppressHydrationWarning>
+            {mounted ? (
+              <div className="text-xl font-black tracking-tighter text-white select-none">
+                NEXT<span className="text-purple-500">FLOW</span>
+              </div>
+            ) : (
+              <div className="w-8 h-8 bg-white/10 rounded-lg animate-pulse" />
+            )}
+          </div>
         </Link>
       </div>
 
