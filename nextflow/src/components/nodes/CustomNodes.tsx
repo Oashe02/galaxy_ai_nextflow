@@ -468,6 +468,7 @@ export function CropImageNode({ id, data, selected }: any) {
     <BaseNode
       title="Crop Image"
       selected={selected}
+      executing={nodeStatus === 'running'}
       icon={<Crop className="w-3.5 h-3.5 text-orange-400" />}
       inputs={[{ id: 'image', label: 'Image' }]}
       outputs={[{ id: 'output', label: 'Cropped' }]}
@@ -641,6 +642,7 @@ export function ExtractFrameNode({ id, data, selected }: any) {
     <BaseNode
       title="Extract Frame"
       selected={selected}
+      executing={nodeStatus === 'running'}
       icon={<Film className="w-3.5 h-3.5 text-cyan-400" />}
       inputs={[{ id: 'video', label: 'Video' }]}
       outputs={[{ id: 'output', label: 'Frame' }]}

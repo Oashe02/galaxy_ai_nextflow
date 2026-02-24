@@ -1,5 +1,6 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import { Navbar } from "@/components/layout/Navbar";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 export default function RootLayout({
@@ -15,6 +16,7 @@ export default function RootLayout({
           <div className="pt-20">
             {children}
           </div>
+          <Toaster theme="dark" position="bottom-right" />
         </body>
       </html>
     </ClerkProvider>

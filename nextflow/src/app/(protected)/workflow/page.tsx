@@ -13,6 +13,7 @@ import {
 import { ReactFlowProvider } from '@xyflow/react';
 import Link from 'next/link';
 import { runDAG, recordRunHistory, type DagRunResult } from '@/lib/dagRunner';
+import { toast } from 'sonner';
 
 const NODE_TYPES = [
   { name: 'Text Node', icon: Type, type: 'text', color: 'text-blue-400' },
@@ -168,12 +169,20 @@ export default function WorkflowPage() {
 
   const handleRunWorkflow = useCallback(async () => {
     if (nodes.length === 0) return;
-    const result = await runDAG(nodes, edges, 'full');
-    // Auto record to DB
-    const wfId = await autoSaveBeforeRun();
-    if (wfId) {
-      await recordRunHistory(wfId, result);
-      refreshHistory();
+    try {
+      const result = await runDAG(nodes, edges, 'full');
+      const wfId = await autoSaveBeforeRun();
+      if (wfId) {
+        await recordRunHistory(wfId, result);
+        refreshHistory();
+      }
+      if (result.success) {
+        toast.success("Workflow completed successfully!");
+      } else {
+        toast.error("Workflow encountered errors. Check history.");
+      }
+    } catch (err: any) {
+      toast.error(`Workflow execution failed: ${err.message}`);
     }
   }, [nodes, edges, wfMeta, patchMeta, refreshHistory]);
 
@@ -182,12 +191,21 @@ export default function WorkflowPage() {
     const relevantEdges = edges.filter(e => selected.includes(e.source) && selected.includes(e.target));
     if (selectedNodes.length === 0) return;
     const scope = selectedNodes.length === 1 ? 'single' : 'partial';
-    const result = await runDAG(selectedNodes, relevantEdges, scope);
     
-    const wfId = await autoSaveBeforeRun();
-    if (wfId) {
-      await recordRunHistory(wfId, result);
-      refreshHistory();
+    try {
+      const result = await runDAG(selectedNodes, relevantEdges, scope);
+      const wfId = await autoSaveBeforeRun();
+      if (wfId) {
+        await recordRunHistory(wfId, result);
+        refreshHistory();
+      }
+      if (result.success) {
+        toast.success(`${scope === 'single' ? 'Node' : 'Nodes'} executed successfully!`);
+      } else {
+        toast.error(`Execution failed for selected nodes.`);
+      }
+    } catch (err: any) {
+      toast.error(`Execution failed: ${err.message}`);
     }
   }, [nodes, edges, selected, wfMeta, patchMeta, refreshHistory]);
 
@@ -348,8 +366,8 @@ export default function WorkflowPage() {
                     disabled={isRunning}
                     className="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-full text-xs font-bold transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50"
                   >
-                    <Play className="w-3 h-3 fill-current" />
-                    Run {selected.length === 1 ? 'Node' : `${selected.length} Nodes`}
+                    {isRunning ? <Loader2 className="w-3 h-3 animate-spin text-white" /> : <Play className="w-3 h-3 fill-current" />}
+                    {isRunning ? 'Running...' : `Run ${selected.length === 1 ? 'Node' : `${selected.length} Nodes`}`}
                   </button>
                 )}
                 <button 

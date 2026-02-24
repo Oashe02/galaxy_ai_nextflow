@@ -26,6 +26,7 @@ import {
 export default function WorkflowCanvas() {
   const nodes = useWorkflowStore(s => s.nodes);
   const edges = useWorkflowStore(s => s.edges);
+  const isRunning = useWorkflowStore(s => s.running);
   const onNodesChange = useWorkflowStore(s => s.handleNodesChange);
   const onEdgesChange = useWorkflowStore(s => s.handleEdgesChange);
   const onConnect = useWorkflowStore(s => s.handleConnect);
@@ -79,11 +80,21 @@ export default function WorkflowCanvas() {
     console.log('dblclick:', node.id);
   }, []);
 
+  const animatedEdges = useMemo(() => {
+    return edges.map(e => ({
+      ...e,
+      animated: isRunning ? true : e.animated,
+      style: isRunning 
+        ? { stroke: '#A855F7', strokeWidth: 3, filter: 'drop-shadow(0 0 8px rgba(168, 85, 247, 0.8))' } 
+        : e.style,
+    }));
+  }, [edges, isRunning]);
+
   return (
     <div className="w-full h-full relative bg-black">
       <ReactFlow
         nodes={nodes}
-        edges={edges}
+        edges={animatedEdges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}

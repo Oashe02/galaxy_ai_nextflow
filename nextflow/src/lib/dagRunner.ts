@@ -76,6 +76,7 @@ function waitForNode(nodeId: string): Promise<'success' | 'failed'> {
 export type RunScope = 'full' | 'single' | 'partial';
 
 export interface DagRunResult {
+    success: boolean;
     status: 'success' | 'failed' | 'partial';
     runType: RunScope;
     duration: number;
@@ -167,6 +168,7 @@ export async function runDAG(
     store.patchMeta({ status: finalStatus === 'success' ? 'done' : 'error' });
 
     return {
+        success: finalStatus === 'success',
         status: finalStatus,
         runType: scope,
         duration: totalDuration,
