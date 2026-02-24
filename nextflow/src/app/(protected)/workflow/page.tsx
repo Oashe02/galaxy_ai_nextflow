@@ -193,15 +193,23 @@ export default function WorkflowPage() {
 
   // === Export / Import JSON ===
   const handleExport = useCallback(() => {
-    const data = { name: wfMeta.name, desc: wfMeta.desc, nodes, edges };
+    const cleanNodes = nodes.map((n: any) => {
+      const d = { ...n.data };
+      if (typeof d.imageUrl === 'string' && d.imageUrl.startsWith('data:')) { d.imageUrl = null; d.hadImage = true; }
+      if (typeof d.videoUrl === 'string' && d.videoUrl.startsWith('data:')) { d.videoUrl = null; d.hadVideo = true; }
+      if (typeof d.result === 'string' && d.result.startsWith('data:')) { d.result = null; d.hadResult = true; }
+      return { ...n, data: d };
+    });
+
+    const data = { nodes: cleanNodes, edges };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${wfMeta.name.replace(/\s+/g, '_')}.json`;
+    a.download = `workflow-export-${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
-  }, [wfMeta, nodes, edges]);
+  }, [nodes, edges]);
 
   const handleImport = useCallback(() => {
     const input = document.createElement('input');
@@ -215,8 +223,14 @@ export default function WorkflowPage() {
         const data = JSON.parse(text);
         if (data.nodes) setNodes(data.nodes);
         if (data.edges) setEdges(data.edges);
-        if (data.name) renameFn(data.name);
-        patchMeta({ status: 'draft' });
+        
+        // Generate a new ID so imported flows don't overwrite existing db items
+        patchMeta({ 
+          id: `wf-import-${Date.now()}`, 
+          name: data.name || 'Imported Workflow', 
+          status: 'draft' 
+        });
+        
         setView('canvas');
       } catch (err) {
         console.error('Invalid JSON file');
