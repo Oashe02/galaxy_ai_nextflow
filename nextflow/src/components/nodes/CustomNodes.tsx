@@ -239,7 +239,7 @@ export function LLMNode({ id, data, selected }: any) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: data.model || 'gemini-2.0-flash',
+          model: data.model || 'gemini-2.5-flash',
           userMessage: userMsg || 'Hello',
           systemPrompt: sysPrompt,
           temperature: data.temperature ?? 0.7,
@@ -300,13 +300,13 @@ export function LLMNode({ id, data, selected }: any) {
           <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Model</label>
           <div className="relative">
             <select 
-              value={data.model || 'gemini-2.0-flash'}
+              value={data.model || 'gemini-2.5-flash'}
               onChange={handleModelChange}
               className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-2 text-xs text-zinc-300 focus:outline-none focus:border-purple-500 transition-colors cursor-pointer appearance-none pr-8"
             >
-              <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
-              <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-              <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+              <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+              <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+              <option value="gemini-flash-latest">Gemini Flash Latest</option>
               <option value="gpt-4o">GPT-4o</option>
               <option value="claude-3.5-sonnet">Claude 3.5 Sonnet</option>
             </select>

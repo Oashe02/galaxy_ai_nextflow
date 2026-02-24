@@ -18,12 +18,10 @@ export const cropImageTask = task({
 
         let buf: Buffer;
 
-        // Handle base64 data URLs directly (from browser FileReader)
         if (imageUrl.startsWith("data:")) {
             const base64Data = imageUrl.replace(/^data:image\/\w+;base64,/, "");
             buf = Buffer.from(base64Data, "base64");
         } else if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
-            // Only fetch real HTTP URLs
             const imgRes = await fetch(imageUrl);
             if (!imgRes.ok) throw new Error(`Failed to fetch image: ${imgRes.status}`);
             buf = Buffer.from(await imgRes.arrayBuffer());

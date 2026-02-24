@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
                 nodeRuns: {
                     create: (nodes || []).map((n: any) => ({
                         nodeId: n.nodeId,
-                        nodeType: n.name, // The task is using `name` for type/label representation loosely
+                        nodeType: n.name, 
                         status: n.status,
                         duration: n.ms,
                         outputs: n.output ? { result: n.output } : null,

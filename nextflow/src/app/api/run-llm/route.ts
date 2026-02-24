@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
         }
 
         const handle = await tasks.trigger<typeof runLLMTask>("run-llm", {
-            model: model || "gemini-2.0-flash",
+            model: model || "gemini-1.5-flash",
             systemPrompt,
             userMessage,
             images,

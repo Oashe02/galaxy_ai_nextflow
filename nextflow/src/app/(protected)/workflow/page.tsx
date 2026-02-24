@@ -69,7 +69,7 @@ export default function WorkflowPage() {
            setNodes([
              { id: 'text-brand', type: 'text', position: { x: 50, y: 100 }, data: { label: 'Brand Voice / Guidelines', text: 'We are a luxury, eco-friendly coffee brand. Tone: sophisticated, punchy, and energetic.' } },
              { id: 'img-product', type: 'uploadImage', position: { x: 50, y: 350 }, data: { label: 'Product Photo' } },
-             { id: 'llm-insta', type: 'llm', position: { x: 450, y: 50 }, data: { label: 'Instagram Caption', model: 'gemini-2.0-flash', temperature: 0.8, user_message: 'Generate a highly engaging Instagram caption for this product photo with hashtags.' } },
+             { id: 'llm-insta', type: 'llm', position: { x: 450, y: 50 }, data: { label: 'Instagram Caption', model: 'gemini-1.5-flash', temperature: 0.8, user_message: 'Generate a highly engaging Instagram caption for this product photo with hashtags.' } },
              { id: 'llm-tweet', type: 'llm', position: { x: 450, y: 450 }, data: { label: 'Twitter Post', model: 'gemini-1.5-pro', temperature: 0.6, user_message: 'Write a short, engaging Twitter post about the eco-friendly aspects of this product.' } },
            ]);
            setEdges([

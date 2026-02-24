@@ -30,8 +30,8 @@ export function BaseNode({
   return (
     <div className={cn(
       "group relative min-w-[240px] rounded-xl bg-[#0A0A0A] border transition-all duration-300",
-      selected ? "border-purple-500 shadow-[0_0_20px_rgba(139,92,246,0.2)]" : "border-zinc-800",
-      executing && "animate-pulse border-purple-400 shadow-[0_0_30px_rgba(139,92,246,0.4)]"
+      selected && !executing ? "border-purple-500 shadow-[0_0_20px_rgba(139,92,246,0.2)]" : "border-zinc-800",
+      executing && "node-executing border-purple-400"
     )}>
       {/* Node Header */}
       <div className="flex items-center gap-2 px-3 py-2.5 border-b border-zinc-900 bg-zinc-900/30">
