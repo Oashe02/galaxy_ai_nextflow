@@ -14,11 +14,6 @@ interface NodeResult {
     error?: string;
 }
 
-/**
- * Topologically sort the DAG and return execution layers.
- * Each layer contains nodes whose dependencies are all in previous layers.
- * Nodes within the same layer can be triggered in parallel.
- */
 function getExecutionLayers(nodes: Node[], edges: Edge[]): Node[][] {
     const inDegree = new Map<string, number>();
     const adj = new Map<string, string[]>();
@@ -57,10 +52,6 @@ function getExecutionLayers(nodes: Node[], edges: Edge[]): Node[][] {
     return layers;
 }
 
-/**
- * Wait for a node to reach a terminal state (success or failed).
- * Returns a promise that resolves when the node's runState changes.
- */
 function waitForNode(nodeId: string): Promise<'success' | 'failed'> {
     return new Promise((resolve) => {
         const check = () => {
@@ -83,12 +74,6 @@ export interface DagRunResult {
     nodeResults: NodeResult[];
 }
 
-/**
- * Run all specified nodes through the DAG in topological order.
- * Source nodes (text, image, video) resolve instantly.
- * Executable nodes are triggered via a window CustomEvent that each node's useEffect listens for.
- * Nodes in the same layer run in parallel; the next layer waits for all current layer nodes.
- */
 export async function runDAG(
     targetNodes: Node[],
     edges: Edge[],

@@ -9,6 +9,7 @@ import {
   BackgroundVariant,
   Panel,
   useReactFlow,
+  ConnectionMode,
   type NodeMouseHandler,
   type IsValidConnection,
 } from '@xyflow/react';
@@ -91,7 +92,12 @@ export default function WorkflowCanvas() {
   }, [edges, isRunning]);
 
   return (
-    <div className="w-full h-full relative bg-black">
+    <div className="w-full h-full relative bg-[#050505]">
+      {/* Decorative background glow */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-[25%] -left-[10%] w-[50%] h-[50%] bg-purple-500/5 blur-[120px] rounded-full" />
+        <div className="absolute -bottom-[25%] -right-[10%] w-[50%] h-[50%] bg-blue-500/5 blur-[120px] rounded-full" />
+      </div>
       <ReactFlow
         nodes={nodes}
         edges={animatedEdges}
@@ -104,10 +110,11 @@ export default function WorkflowCanvas() {
         isValidConnection={checkConnection}
         nodeTypes={nodeTypes}
         colorMode="dark"
-        defaultViewport={{ x: 0, y: 0, zoom: 1 }}
-        minZoom={0.1}
-        maxZoom={5}
-        connectionLineStyle={{ stroke: '#8B5CF6', strokeWidth: 2 }}
+        defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
+        minZoom={0.05}
+        maxZoom={3}
+        connectionLineStyle={{ stroke: '#A855F7', strokeWidth: 3, strokeDasharray: '5,5' }}
+        connectionMode={ConnectionMode.Loose}
         snapToGrid
         snapGrid={[20, 20]}
         fitView
@@ -119,63 +126,62 @@ export default function WorkflowCanvas() {
         selectNodesOnDrag={false}
       >
         <Background 
-          variant={BackgroundVariant.Dots} 
-          gap={20} size={1} color="#27272A" 
+          variant={BackgroundVariant.Lines} 
+          gap={30} size={1} color="rgba(255,255,255,0.03)" 
         />
         <Controls 
-          className="!left-4 !bottom-4 !bg-[#0A0A0A] !border-zinc-800 !rounded-xl !shadow-xl"
+          className="!left-6 !bottom-6 !bg-black/60 !backdrop-blur-xl !border-white/5 !rounded-2xl !shadow-2xl !p-1"
           showInteractive={false}
         />
         <MiniMap 
-          className="!right-4 !bottom-4 !bg-[#0A0A0A] !border-zinc-800 !rounded-xl !shadow-xl"
-          nodeStrokeWidth={3}
-          maskColor="rgba(0, 0, 0, 0.7)"
+          className="!right-6 !bottom-6 !bg-black/60 !backdrop-blur-xl !border-white/5 !rounded-2xl !shadow-2xl overflow-hidden"
+          nodeStrokeWidth={4}
+          maskColor="rgba(0, 0, 0, 0.6)"
           pannable zoomable
           nodeColor={(n) => {
             switch (n.type) {
-              case 'llm': return '#8B5CF6';
+              case 'llm': return '#A855F7';
               case 'text': return '#3B82F6';
               case 'uploadImage': return '#10B981';
               case 'uploadVideo': return '#EF4444';
               case 'cropImage': return '#F59E0B';
               case 'extractFrame': return '#06B6D4';
-              default: return '#3F3F46';
+              default: return '#52525B';
             }
           }}
         />
 
         <Panel position="top-right" className="flex gap-2">
-          <button className="flex items-center gap-2 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all shadow-sm">
-            <MousePointer2 className="w-4 h-4" /> Select
+          <button className="flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-xl border border-white/5 rounded-xl text-xs font-bold text-zinc-400 hover:text-white hover:bg-white/5 transition-all duration-300 shadow-xl">
+            <MousePointer2 className="w-4 h-4 text-purple-400" /> Interaction Mode
           </button>
           <button 
-            className="flex items-center gap-2 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all shadow-sm"
-            onClick={() => fitView({ duration: 400, padding: 0.2 })}
+            className="flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-xl border border-white/5 rounded-xl text-xs font-bold text-zinc-400 hover:text-white hover:bg-white/5 transition-all duration-300 shadow-xl"
+            onClick={() => fitView({ duration: 800, padding: 0.2 })}
           >
-            <Maximize className="w-4 h-4" /> Fit View
+            <Maximize className="w-4 h-4 text-purple-400" /> Center View
           </button>
         </Panel>
 
         {sel.length > 0 && (
-          <Panel position="bottom-center" className="flex gap-2 mb-4">
-            <div className="flex items-center gap-1.5 bg-zinc-900/95 border border-zinc-800 rounded-xl p-1.5 shadow-2xl backdrop-blur-md">
-              <span className="text-[11px] text-zinc-400 font-medium px-2">{sel.length} selected</span>
-              <div className="w-px h-5 bg-zinc-800" />
+          <Panel position="bottom-center" className="flex gap-2 mb-8 scale-110 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="flex items-center gap-2 bg-black/60 backdrop-blur-2xl border border-purple-500/20 rounded-2xl p-2 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+              <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest px-3 border-r border-white/5">{sel.length} SELECTED</span>
               {sel.length === 1 && (
                 <button
                   onClick={() => clone(sel[0])}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-300"
                   title="Duplicate (⌘D)"
                 >
-                  <Copy className="w-3.5 h-3.5" /> Duplicate
+                  <Copy className="w-3.5 h-3.5" />
                 </button>
               )}
               <button
                 onClick={delSelected}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-rose-500/80 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all duration-300"
                 title="Delete (⌫)"
               >
-                <Trash2 className="w-3.5 h-3.5" /> Delete
+                <Trash2 className="w-3.5 h-3.5" />
               </button>
             </div>
           </Panel>

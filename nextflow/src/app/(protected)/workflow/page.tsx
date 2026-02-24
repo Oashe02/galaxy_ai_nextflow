@@ -8,7 +8,7 @@ import {
   Crop, Share2, Plus, SlidersHorizontal, Maximize2, Sparkles, 
   Box, Workflow, Wand2, Scissors, Home, Pen, Film, Zap, Save, Loader2,
   ChevronDown, ChevronRight, Clock, CheckCircle2, XCircle, AlertTriangle,
-  Download, Upload as UploadIcon
+  Download, Upload as UploadIcon, RefreshCw
 } from 'lucide-react';
 import { ReactFlowProvider } from '@xyflow/react';
 import Link from 'next/link';
@@ -273,8 +273,8 @@ export default function WorkflowPage() {
   if (view === 'canvas') {
     return (
       <ReactFlowProvider>
-        <div className="flex h-[calc(100vh-80px)] overflow-hidden bg-black text-white selection:bg-purple-500/30">
-          <aside className="w-64 border-r border-zinc-900 flex flex-col bg-[#050505] z-20">
+        <div className="flex h-[calc(100vh-80px)] overflow-hidden bg-gradient-to-br from-[#0c0a15] via-black to-[#050505] text-white selection:bg-purple-500/30">
+          <aside className="w-64 border-r border-white/5 flex flex-col bg-black/40 backdrop-blur-3xl shadow-[4px_0_24px_rgba(0,0,0,0.5)] z-20">
             <div className="p-4 space-y-4">
               <button 
                 onClick={() => setView('dashboard')}
@@ -288,7 +288,7 @@ export default function WorkflowPage() {
                 <input 
                   type="text" 
                   placeholder="Search nodes..." 
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-purple-500 transition-colors"
+                  className="w-full bg-white/5 border border-white/5 rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-purple-500/50 focus:bg-white/10 transition-all duration-300 placeholder:text-zinc-600 shadow-inner"
                 />
               </div>
               
@@ -300,10 +300,10 @@ export default function WorkflowPage() {
                       <button 
                         key={node.name}
                         onClick={() => handleAddNode(node.name, node.type)}
-                        className="flex items-center gap-3 px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-900 hover:border-zinc-700 hover:bg-zinc-900 transition-all text-sm font-medium group text-zinc-300 hover:text-white"
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/5 border border-white/5 hover:border-purple-500/30 hover:bg-white/10 transition-all duration-300 text-sm font-medium group text-zinc-300 hover:text-white hover:shadow-[0_0_20px_rgba(168,85,247,0.1)] hover:-translate-y-0.5"
                       >
-                        <div className="w-8 h-8 rounded bg-zinc-900 border border-zinc-800 flex items-center justify-center group-hover:bg-zinc-800 transition-colors">
-                          <node.icon className={`w-4 h-4 ${node.color} opacity-70 group-hover:opacity-100 transition-all`} />
+                        <div className="w-8 h-8 rounded-lg bg-black/40 border border-white/5 flex items-center justify-center group-hover:bg-purple-500/10 group-hover:border-purple-500/30 transition-all duration-300 shadow-inner">
+                          <node.icon className={`w-4 h-4 ${node.color} opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300`} />
                         </div>
                         {node.name}
                       </button>
@@ -313,13 +313,13 @@ export default function WorkflowPage() {
               </div>
             </div>
             
-            <div className="mt-auto p-4 border-t border-zinc-900 text-[10px] text-zinc-600 font-medium bg-black/50 backdrop-blur-sm">
+            <div className="mt-auto p-4 border-t border-white/5 text-[10px] text-zinc-500 font-medium tracking-widest bg-black/20 backdrop-blur-sm">
               NEXTFLOW v0.1.0 • ALPHA
             </div>
           </aside>
 
-          <main className="flex-1 relative flex flex-col">
-            <div className="h-12 border-b border-zinc-900 bg-[#050505] flex items-center justify-between px-4 z-10">
+          <main className="flex-1 relative flex flex-col min-w-0">
+            <div className="h-14 border-b border-white/5 bg-black/40 backdrop-blur-xl flex items-center justify-between px-6 z-10 shadow-lg">
               <div className="flex items-center gap-4">
                 <input
                   type="text"
@@ -327,24 +327,24 @@ export default function WorkflowPage() {
                   onChange={(e) => renameFn(e.target.value)}
                   className="text-sm font-semibold tracking-tight text-zinc-200 bg-transparent border-none outline-none focus:ring-1 focus:ring-purple-500 rounded px-1 -ml-1 max-w-[200px]"
                 />
-                <div className="h-4 w-px bg-zinc-800" />
-                <span className={`text-[11px] font-medium px-2 py-0.5 rounded border ${
-                  wfMeta.status === 'running' ? 'text-purple-400 bg-purple-500/10 border-purple-500/30' :
-                  wfMeta.status === 'done' ? 'text-green-400 bg-green-500/10 border-green-500/30' :
-                  wfMeta.status === 'error' ? 'text-red-400 bg-red-500/10 border-red-500/30' :
-                  'text-zinc-500 bg-zinc-900/50 border-zinc-800'
+                <div className="h-4 w-px bg-white/5" />
+                <span className={`text-[10px] font-bold tracking-widest px-2.5 py-1 rounded-full border transition-all duration-500 shadow-sm ${
+                  wfMeta.status === 'running' ? 'text-purple-400 bg-purple-500/10 border-purple-500/20 animate-pulse' :
+                  wfMeta.status === 'done' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' :
+                  wfMeta.status === 'error' ? 'text-rose-400 bg-rose-500/10 border-rose-500/20' :
+                  'text-zinc-500 bg-white/5 border-white/5'
                 }`}>
-                  {wfMeta.status.charAt(0).toUpperCase() + wfMeta.status.slice(1)}
+                  {wfMeta.status.toUpperCase()}
                 </span>
-                <span className="text-[10px] text-zinc-600">{nodes.length} nodes • {edges.length} edges</span>
+                <span className="text-[10px] text-zinc-500 font-medium tracking-tight bg-white/5 px-2 py-1 rounded-lg border border-white/5">{nodes.length} nodes • {edges.length} edges</span>
               </div>
               <div className="flex items-center gap-2">
                 <button 
                   onClick={nuke}
-                  className="px-3 py-1.5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-300 rounded-lg text-xs font-bold transition-all flex items-center gap-2"
+                  className="px-4 py-1.5 bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 text-zinc-200 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2 shadow-sm hover:translate-y-[-1px]"
                   title="Create New Workflow"
                 >
-                  <Plus className="w-3.5 h-3.5" />
+                  <Plus className="w-3.5 h-3.5 text-purple-400" />
                   New
                 </button>
                 <button 
@@ -364,10 +364,10 @@ export default function WorkflowPage() {
                 <button 
                   onClick={handleSaveWorkflow}
                   disabled={isSaving}
-                  className="px-4 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-full text-xs font-bold transition-all flex items-center gap-2"
+                  className="px-5 py-1.5 bg-zinc-200 hover:bg-white text-black rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.1)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-                  {isSaving ? 'Saving...' : 'Save'}
+                  {isSaving ? 'Synchronizing...' : 'Save Draft'}
                 </button>
                 {selected.length > 0 && (
                   <button 
@@ -398,128 +398,165 @@ export default function WorkflowPage() {
             </div>
           </main>
 
-          <aside className="w-80 border-l border-zinc-900 flex flex-col bg-[#050505] z-20">
-            <div className="p-4 border-b border-zinc-900 flex items-center justify-between">
-              <h3 className="text-xs font-bold text-zinc-200 flex items-center gap-2">
-                <History className="w-3.5 h-3.5 text-purple-400" />
-                Workflow History
-              </h3>
+          <aside className="w-[340px] border-l border-white/5 flex flex-col bg-black/40 backdrop-blur-3xl z-20 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]">
+            <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+                  <History className="w-4 h-4 text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="text-[13px] font-black text-white uppercase tracking-[0.1em]">History</h3>
+                  <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">Audit Log</p>
+                </div>
+              </div>
               <button 
                 onClick={refreshHistory}
-                className="text-[10px] text-zinc-500 hover:text-zinc-300 transition-colors"
+                className="p-2 hover:bg-white/5 rounded-lg transition-all text-zinc-500 hover:text-white"
+                title="Refresh History"
               >
-                Refresh
+                <RefreshCw className={`w-3.5 h-3.5 ${isRunning ? 'animate-spin text-purple-400' : ''}`} />
               </button>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-3 space-y-2">
+            <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-premium">
               {/* DB-persisted history */}
               {dbHistory.length === 0 && logs.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-24 text-center">
-                  <div className="w-12 h-12 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-4">
-                    <History className="w-6 h-6 text-zinc-700" />
+                <div className="flex flex-col items-center justify-center py-32 text-center opacity-40">
+                  <div className="w-16 h-16 rounded-3xl bg-white/[0.02] border border-white/5 flex items-center justify-center mb-6 shadow-inner">
+                    <History className="w-7 h-7 text-zinc-700" />
                   </div>
-                  <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">No history yet</p>
-                  <p className="text-[10px] max-w-[180px] mt-2 text-zinc-600 leading-relaxed font-medium">
-                    Executions will appear here after you run your workflow.
+                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Matrix Empty</p>
+                  <p className="text-[10px] max-w-[180px] mt-2 text-zinc-600 font-medium leading-relaxed">
+                    Awaiting initial workflow execution protocol.
                   </p>
                 </div>
               ) : (
                 <>
                   {/* In-memory logs from current session */}
                   {logs.length > 0 && (
-                    <div className="mb-3">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Current Session</span>
-                        <button onClick={clearLogs} className="text-[9px] text-zinc-600 hover:text-zinc-400 transition-colors">Clear</button>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-black text-purple-400/80 uppercase tracking-[0.2em]">Live Stream</span>
+                        <button onClick={clearLogs} className="text-[9px] text-zinc-600 hover:text-rose-400 font-bold uppercase transition-colors">Clear</button>
                       </div>
-                      {logs.map((log: LogEntry) => (
-                        <div key={log.id} className="p-2.5 bg-zinc-900/50 border border-zinc-800 rounded-lg mb-1.5">
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-[11px] font-medium text-zinc-300">{log.name}</span>
-                            <span className={`text-[9px] font-bold uppercase tracking-wider ${
-                              log.status === 'success' ? 'text-green-400' :
-                              log.status === 'failed' ? 'text-red-400' :
-                              log.status === 'running' ? 'text-purple-400' :
-                              'text-zinc-500'
-                            }`}>{log.status}</span>
+                      <div className="space-y-2">
+                        {logs.map((log: LogEntry) => (
+                          <div key={log.id} className="p-3 bg-white/[0.02] border border-white/5 rounded-2xl group/log hover:bg-white/[0.04] transition-all duration-300">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-[11px] font-bold text-zinc-300 group-hover/log:text-white transition-colors">{log.name}</span>
+                              <div className="flex items-center gap-1.5">
+                                <div className={`w-1.5 h-1.5 rounded-full ${
+                                  log.status === 'success' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' :
+                                  log.status === 'failed' ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]' :
+                                  'bg-purple-500 animate-pulse shadow-[0_0_8px_rgba(168,85,247,0.5)]'
+                                }`} />
+                                <span className={`text-[9px] font-black uppercase tracking-widest ${
+                                  log.status === 'success' ? 'text-emerald-400' :
+                                  log.status === 'failed' ? 'text-rose-400' :
+                                  'text-purple-400'
+                                }`}>{log.status}</span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 text-[9px] font-bold text-zinc-600 uppercase tracking-tighter">
+                              <span>{new Date(log.ts).toLocaleTimeString()}</span>
+                              {log.ms !== undefined && (
+                                <>
+                                  <span className="opacity-30">•</span>
+                                  <span className="text-zinc-500">{(log.ms / 1000).toFixed(2)}s</span>
+                                </>
+                              )}
+                            </div>
                           </div>
-                          <span className="text-[10px] text-zinc-600">
-                            {new Date(log.ts).toLocaleTimeString()}
-                            {log.ms ? ` • ${(log.ms / 1000).toFixed(1)}s` : ''}
-                          </span>
-                          {log.out && <p className="text-[10px] text-zinc-500 mt-1 truncate">{log.out}</p>}
-                          {log.err && <p className="text-[10px] text-red-400 mt-1 truncate">{log.err}</p>}
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   )}
                   
                   {/* Persisted DB runs */}
                   {dbHistory.length > 0 && (
-                    <div>
-                      <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Past Runs</span>
-                      {dbHistory.map((run: any) => {
-                        const isExpanded = expandedRun === run.id;
-                        const statusIcon = run.status === 'success' ? <CheckCircle2 className="w-3 h-3 text-green-400" /> :
-                                          run.status === 'failed' ? <XCircle className="w-3 h-3 text-red-400" /> :
-                                          <AlertTriangle className="w-3 h-3 text-yellow-400" />;
-                        const scopeLabel = run.scope === 'full' ? 'Full Workflow' :
-                                          run.scope === 'single' ? 'Single Node' :
-                                          `Partial Workflow (${(run.nodeRuns as any[])?.length || 0} nodes)`;
-                        return (
-                          <div key={run.id} className="border border-zinc-800 rounded-lg mb-2 overflow-hidden bg-zinc-950/20">
-                            <button
-                              onClick={() => setExpandedRun(isExpanded ? null : run.id)}
-                              className="w-full p-2.5 flex items-center justify-between hover:bg-zinc-900/50 transition-colors"
-                            >
-                              <div className="flex items-center gap-2">
-                                {statusIcon}
-                                <div className="text-left">
-                                  <p className="text-[11px] font-medium text-zinc-300 flex leading-none gap-2">
-                                    {scopeLabel} 
-                                    {run.status === 'partial' && (
-                                      <span className="bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 text-[8px] px-1 py-0.5 rounded uppercase tracking-wider">Partial Fail</span>
-                                    )}
-                                  </p>
-                                  <p className="text-[9px] text-zinc-600 flex items-center gap-1 mt-1">
-                                    <Clock className="w-2.5 h-2.5" />
-                                    {new Date(run.createdAt).toLocaleString()}
-                                    {' • '}{(run.duration / 1000).toFixed(1)}s
-                                  </p>
-                                </div>
-                              </div>
-                              {isExpanded ? <ChevronDown className="w-3 h-3 text-zinc-500" /> : <ChevronRight className="w-3 h-3 text-zinc-500" />}
-                            </button>
-                            {isExpanded && (
-                              <div className="bg-zinc-950/50 flex flex-col gap-1 p-2 pt-0">
-                                <div className="h-px bg-zinc-800/50 mb-1" />
-                                {(run.nodeRuns as any[])?.map((nr: any, i: number) => (
-                                  <div key={i} className="flex flex-col p-1.5 rounded-md hover:bg-zinc-900/50 border border-transparent hover:border-zinc-800 transition-colors">
-                                    <div className="flex items-center justify-between">
-                                      <div className="flex items-center gap-2">
-                                        {nr.status === 'success' ? <CheckCircle2 className="w-2.5 h-2.5 text-green-500" /> : <XCircle className="w-2.5 h-2.5 text-red-500" />}
-                                        <span className={`text-[10px] font-medium ${nr.status === 'success' ? 'text-zinc-300' : 'text-red-400'}`}>
-                                          {nr.nodeType || nr.nodeId}
-                                        </span>
-                                      </div>
-                                      <span className="text-[9px] text-zinc-600 font-mono">{(nr.duration / 1000).toFixed(1)}s</span>
+                    <div className="space-y-4">
+                      <span className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.2em]">Archive</span>
+                      <div className="space-y-2.5">
+                        {dbHistory.map((run: any) => {
+                          const isExpanded = expandedRun === run.id;
+                          const statusIcon = run.status === 'success' ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> :
+                                            run.status === 'failed' ? <XCircle className="w-3.5 h-3.5 text-rose-400" /> :
+                                            <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />;
+                          
+                          const scopeLabel = run.scope === 'full' ? 'Core Execution' :
+                                            run.scope === 'single' ? 'Atomic Run' :
+                                            'Partial Chain';
+
+                          return (
+                            <div key={run.id} className={`group/run border rounded-2xl overflow-hidden transition-all duration-500 ${
+                              isExpanded ? 'bg-white/5 border-white/10 shadow-2xl' : 'bg-white/[0.01] border-white/5 hover:border-white/10'
+                            }`}>
+                              <button
+                                onClick={() => setExpandedRun(isExpanded ? null : run.id)}
+                                className="w-full p-4 flex items-center justify-between text-left"
+                              >
+                                <div className="flex items-center gap-3.5">
+                                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500 ${
+                                    isExpanded ? 'bg-white/10 scale-110' : 'bg-black/40 border border-white/5'
+                                  }`}>
+                                    {statusIcon}
+                                  </div>
+                                  <div>
+                                    <div className="flex items-center gap-2 mb-0.5">
+                                      <span className="text-[11px] font-black text-white uppercase tracking-wider">{scopeLabel}</span>
+                                      {run.status === 'partial' && (
+                                        <span className="bg-amber-500/10 text-amber-500 border border-amber-500/20 text-[8px] font-black px-1.5 py-0.5 rounded-lg uppercase tracking-widest">Partial</span>
+                                      )}
                                     </div>
-                                    {nr.status === 'failed' && nr.error && (
-                                      <div className="mt-1 ml-4.5 text-[9px] text-red-400/80 bg-red-400/10 rounded p-1.5 border border-red-500/10">
-                                        {nr.error}
+                                    <div className="flex items-center gap-2 text-[9px] font-bold text-zinc-500 uppercase tracking-tighter">
+                                      <span>{new Date(run.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span>
+                                      <span className="opacity-30">•</span>
+                                      <span>{new Date(run.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                      <span className="opacity-30">•</span>
+                                      <span className="text-zinc-400">{(run.duration / 1000).toFixed(1)}s</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className={`transition-transform duration-500 ${isExpanded ? 'rotate-180 text-white' : 'text-zinc-600'}`}>
+                                  <ChevronDown className="w-4 h-4" />
+                                </div>
+                              </button>
+                              
+                              <div className={`grid transition-all duration-500 ease-in-out ${isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+                                <div className="overflow-hidden">
+                                  <div className="px-4 pb-4 space-y-1.5">
+                                    <div className="h-px bg-white/5 mb-3" />
+                                    {(run.nodeRuns as any[])?.map((nr: any, i: number) => (
+                                      <div key={i} className="flex flex-col p-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group/nr">
+                                        <div className="flex items-center justify-between">
+                                          <div className="flex items-center gap-2.5">
+                                            {nr.status === 'success' ? 
+                                              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> : 
+                                              <XCircle className="w-2.5 h-2.5 text-rose-500" />
+                                            }
+                                            <span className={`text-[10px] font-black uppercase tracking-widest ${nr.status === 'success' ? 'text-zinc-400 group-hover/nr:text-zinc-200' : 'text-rose-400'} transition-colors`}>
+                                              {nr.nodeType || 'Processor'}
+                                            </span>
+                                          </div>
+                                          <span className="text-[9px] font-mono text-zinc-600">{(nr.duration / 1000).toFixed(2)}s</span>
+                                        </div>
+                                        {nr.status === 'failed' && nr.error && (
+                                          <p className="mt-2 text-[9px] text-rose-400 font-medium bg-rose-500/5 p-2 rounded-lg border border-rose-500/10 leading-relaxed">
+                                            {nr.error}
+                                          </p>
+                                        )}
                                       </div>
+                                    ))}
+                                    {(!run.nodeRuns || run.nodeRuns.length === 0) && (
+                                      <p className="text-[9px] text-zinc-600 text-center py-4 italic">No execution trace available</p>
                                     )}
                                   </div>
-                                ))}
-                                {(!run.nodeRuns || run.nodeRuns.length === 0) && (
-                                  <div className="text-[9px] text-zinc-600 text-center py-2 italic transition">No node data recorded</div>
-                                )}
+                                </div>
                               </div>
-                            )}
-                          </div>
-                        );
-                      })}
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
                 </>

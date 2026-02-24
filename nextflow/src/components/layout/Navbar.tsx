@@ -31,6 +31,7 @@ const FEATURES = [
 ];
 
 export function Navbar() {
+  const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -38,6 +39,7 @@ export function Navbar() {
   const active = isOpen || isHovered;
 
   useEffect(() => {
+    setMounted(true);
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
@@ -60,11 +62,15 @@ export function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 h-20 flex items-center px-8 bg-black/80 backdrop-blur-md border-b border-white/15 z-[100]">
-      <div className="flex-1 flex items-center">
+      <div className="flex-1 flex items-center h-full">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 bg-white rounded flex items-center justify-center group-hover:bg-zinc-200 transition-colors">
-            <span className="text-black font-black text-xl italic leading-none ml-0.5">K</span>
-          </div>
+          {mounted ? (
+            <div className="text-xl font-black tracking-tighter text-white select-none">
+              NEXT<span className="text-purple-500">FLOW</span>
+            </div>
+          ) : (
+            <div className="w-8 h-8 bg-white/10 rounded-lg animate-pulse" />
+          )}
         </Link>
       </div>
 

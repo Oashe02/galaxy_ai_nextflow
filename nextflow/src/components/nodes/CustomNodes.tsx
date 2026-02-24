@@ -26,11 +26,11 @@ export function TextNode({ id, data, selected }: any) {
           value={data.text || ''}
           onChange={handleTextChange}
           placeholder="Enter prompt or text..."
-          className="w-full h-24 bg-zinc-950 border border-zinc-800 rounded-lg p-2.5 text-xs text-zinc-200 focus:outline-none focus:border-purple-500 transition-colors resize-none placeholder:text-zinc-700 leading-relaxed"
+          className="w-full h-28 bg-black/40 border border-white/5 rounded-xl p-3 text-[13px] text-zinc-200 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 transition-all duration-300 resize-none placeholder:text-zinc-700 leading-relaxed shadow-inner"
         />
         {data.text && (
-          <div className="flex items-center justify-between">
-            <span className="text-[9px] text-zinc-600 font-medium">{data.text.length} characters</span>
+          <div className="flex items-center justify-end px-1">
+            <span className="text-[9px] text-zinc-600 font-bold uppercase tracking-widest bg-white/[0.03] px-2 py-0.5 rounded-full border border-white/5">{data.text.length} chars</span>
           </div>
         )}
       </div>
@@ -81,22 +81,22 @@ export function UploadImageNode({ id, data, selected }: any) {
 
         {data.imageUrl ? (
           <div className="space-y-2">
-            <div className="relative rounded-lg overflow-hidden border border-zinc-800">
+            <div className="relative rounded-2xl overflow-hidden border border-white/5 group/img shadow-2xl">
               <img 
                 src={data.imageUrl} 
                 alt={data.fileName || 'Uploaded'} 
-                className="w-full h-32 object-cover"
+                className="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-700"
               />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
-                <p className="text-[10px] text-white font-medium truncate">{data.fileName}</p>
-                <p className="text-[9px] text-zinc-400">{data.fileSize}</p>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent p-4 flex flex-col justify-end">
+                <p className="text-[11px] text-white font-bold truncate tracking-tight">{data.fileName}</p>
+                <p className="text-[10px] text-zinc-400 font-medium">{data.fileSize}</p>
               </div>
             </div>
             <button 
               onClick={handleRemove}
-              className="w-full py-1.5 text-[10px] font-bold text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-colors uppercase tracking-wider"
+              className="w-full py-2 text-[10px] font-bold text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl hover:bg-rose-500/20 transition-all duration-300 uppercase tracking-widest shadow-sm"
             >
-              Remove Image
+              Remove Asset
             </button>
           </div>
         ) : (
@@ -160,25 +160,27 @@ export function UploadVideoNode({ id, data, selected }: any) {
         />
 
         {data.videoUrl ? (
-          <div className="space-y-2">
-            <div className="relative rounded-lg overflow-hidden border border-zinc-800">
+          <div className="space-y-3">
+            <div className="relative rounded-2xl overflow-hidden border border-white/5 bg-black shadow-2xl group/vid">
               <video 
                 src={data.videoUrl} 
-                className="w-full h-32 object-cover bg-black"
+                className="w-full h-40 object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
                 controls
                 muted
               />
+              <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                 <div className="px-2 py-0.5 rounded bg-black/60 backdrop-blur-md border border-white/10 text-[8px] font-black text-white uppercase tracking-widest">
+                   {data.fileSize}
+                 </div>
+              </div>
             </div>
             <div className="flex items-center justify-between px-1">
-              <div>
-                <p className="text-[10px] text-zinc-300 font-medium truncate max-w-[140px]">{data.fileName}</p>
-                <p className="text-[9px] text-zinc-600">{data.fileSize}</p>
-              </div>
+              <p className="text-[10px] text-zinc-500 font-bold truncate max-w-[120px] uppercase tracking-tighter">{data.fileName}</p>
               <button 
                 onClick={handleRemove}
-                className="py-1 px-2 text-[9px] font-bold text-red-400 bg-red-500/10 border border-red-500/20 rounded-md hover:bg-red-500/20 transition-colors uppercase"
+                className="py-1.5 px-3 text-[9px] font-black text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl hover:bg-rose-500/20 transition-all duration-300 uppercase tracking-widest"
               >
-                Remove
+                Clear Asset
               </button>
             </div>
           </div>
@@ -186,14 +188,14 @@ export function UploadVideoNode({ id, data, selected }: any) {
           <div 
             onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
             onPointerDown={(e) => e.stopPropagation()}
-            className="nodrag nopan h-32 bg-zinc-950 border border-dashed border-zinc-800 rounded-xl flex flex-col items-center justify-center gap-2 group/upload cursor-pointer hover:border-red-500/50 transition-colors"
+            className="nodrag nopan h-40 bg-black/40 border border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center gap-3 group/upload cursor-pointer hover:border-red-500/30 hover:bg-red-500/[0.02] transition-all duration-500 shadow-inner"
           >
-            <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center border border-zinc-800 group-hover/upload:bg-zinc-800 group-hover/upload:border-red-500/30 transition-all">
-              <Film className="w-4 h-4 text-zinc-500 group-hover/upload:text-red-400 transition-colors" />
+            <div className="w-12 h-12 rounded-2xl bg-white/[0.02] flex items-center justify-center border border-white/5 group-hover/upload:bg-red-500/10 group-hover/upload:border-red-500/30 group-hover/upload:scale-110 group-hover/upload:rotate-3 transition-all duration-500">
+              <Video className="w-5 h-5 text-zinc-600 group-hover/upload:text-red-400 transition-colors" />
             </div>
             <div className="text-center">
-              <p className="text-[10px] font-bold text-zinc-500 uppercase">Click to Upload</p>
-              <p className="text-[9px] text-zinc-600 mt-0.5">MP4, WebM, MOV</p>
+              <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] group-hover/upload:text-zinc-300 transition-colors">Import Video</p>
+              <p className="text-[10px] text-zinc-700 font-medium mt-1">MP4 • WEBM • MOV</p>
             </div>
           </div>
         )}
@@ -276,11 +278,11 @@ export function LLMNode({ id, data, selected }: any) {
   }, [id, handleRun]);
 
   const statusConfig = {
-    idle: { color: 'text-zinc-500', icon: null },
-    queued: { color: 'text-yellow-400', icon: <Loader2 className="w-3 h-3 animate-spin" /> },
+    idle: { color: 'text-zinc-600', icon: null },
+    queued: { color: 'text-amber-400', icon: <Loader2 className="w-3 h-3 animate-spin" /> },
     running: { color: 'text-purple-400', icon: <Loader2 className="w-3 h-3 animate-spin" /> },
-    success: { color: 'text-green-400', icon: <Check className="w-3 h-3" /> },
-    failed: { color: 'text-red-400', icon: <AlertCircle className="w-3 h-3" /> },
+    success: { color: 'text-emerald-400', icon: <Check className="w-3 h-3" /> },
+    failed: { color: 'text-rose-400', icon: <AlertCircle className="w-3 h-3" /> },
   };
   return (
     <BaseNode
@@ -298,19 +300,26 @@ export function LLMNode({ id, data, selected }: any) {
       <div className="space-y-3">
         <div className="space-y-1.5">
           <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Model</label>
-          <div className="relative">
+          <div className="relative group/sel">
             <select 
-              value={data.model || 'gemini-2.5-flash'}
+              value={data.model || 'gemini-1.5-flash'}
               onChange={handleModelChange}
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-2 text-xs text-zinc-300 focus:outline-none focus:border-purple-500 transition-colors cursor-pointer appearance-none pr-8"
+              className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-2.5 text-xs text-zinc-300 focus:outline-none focus:border-purple-500/50 focus:bg-white/5 transition-all duration-300 cursor-pointer appearance-none pr-10 shadow-inner group-hover/sel:bg-white/10"
             >
-              <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-              <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
-              <option value="gemini-flash-latest">Gemini Flash Latest</option>
-              <option value="gpt-4o">GPT-4o</option>
-              <option value="claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+              <optgroup label="Google Gemini" className="bg-[#0c0a15] text-zinc-300">
+                <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+                <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+              </optgroup>
+              <optgroup label="OpenAI" className="bg-[#0c0a15] text-zinc-300">
+                <option value="gpt-4o">GPT-4o</option>
+                <option value="gpt-4o-mini">GPT-4o Mini</option>
+              </optgroup>
+              <optgroup label="Anthropic" className="bg-[#0c0a15] text-zinc-300">
+                <option value="claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+              </optgroup>
             </select>
-            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-500 pointer-events-none" />
+            <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500 pointer-events-none group-hover/sel:text-zinc-300 transition-colors" />
           </div>
         </div>
         <div className="space-y-1.5">
@@ -323,23 +332,23 @@ export function LLMNode({ id, data, selected }: any) {
             min="0" max="2" step="0.1"
             value={data.temperature ?? 0.7}
             onChange={(e) => updateNode(id, { temperature: parseFloat(e.target.value) })}
-            className="w-full h-1 bg-zinc-800 rounded-full appearance-none cursor-pointer accent-purple-500"
+            className="w-full h-1.5 bg-white/5 rounded-full appearance-none cursor-pointer accent-purple-500 hover:accent-purple-400 transition-all shadow-inner"
           />
         </div>
-        <div className="p-2.5 border border-dashed border-zinc-800 rounded-lg">
-          <div className="flex items-center gap-2">
-            <div className={`w-1.5 h-1.5 rounded-full ${
-              data.system_prompt || data.user_message ? 'bg-green-500' : 'bg-zinc-700'
+        <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl">
+          <div className="flex items-center gap-2.5">
+            <div className={`w-2 h-2 rounded-full shadow-[0_0_10px_rgba(0,0,0,0.5)] ${
+              data.system_prompt || data.user_message ? 'bg-emerald-500 shadow-emerald-500/50' : 'bg-zinc-800'
             }`} />
-            <span className="text-[10px] text-zinc-600 font-medium">
+            <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">
               {data.system_prompt || data.user_message 
-                ? 'Inputs connected' 
-                : 'Connect inputs to run'}
+                ? 'Signal Ready' 
+                : 'Awaiting Inputs'}
             </span>
           </div>
         </div>
         <button 
-          className="w-full py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50"
+          className="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl text-[11px] font-black uppercase tracking-[0.15em] transition-all duration-300 flex items-center justify-center gap-2 active:scale-[0.96] disabled:opacity-50 shadow-[0_10px_20px_rgba(168,85,247,0.2)]"
           disabled={nodeStatus === 'running'}
           onClick={handleRun}
         >
@@ -365,13 +374,16 @@ export function LLMNode({ id, data, selected }: any) {
               </div>
             )}
           </div>
-          <div className="min-h-[60px] max-h-60 overflow-y-auto bg-zinc-950 border border-zinc-800 rounded-lg p-2.5 text-xs text-zinc-400 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-zinc-800 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
+          <div className="min-h-[80px] max-h-64 overflow-y-auto bg-black/40 border border-white/5 rounded-xl p-3 text-xs text-zinc-400 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-white/10 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent shadow-inner group/out">
             {data.result ? (
-              <div className="text-zinc-300 leading-relaxed whitespace-pre-wrap select-text pr-2 py-1">
+              <div className="text-zinc-300 leading-relaxed whitespace-pre-wrap select-text pr-2 py-1 scroll-smooth">
                 {data.result}
               </div>
             ) : (
-              <p className="text-zinc-700 italic text-[10px]">Output will appear here after execution...</p>
+              <div className="flex flex-col items-center justify-center h-full py-4 space-y-2 opacity-30 group-hover/out:opacity-50 transition-opacity">
+                <Play className="w-5 h-5 text-zinc-600" />
+                <p className="text-zinc-600 italic text-[10px] uppercase font-bold tracking-widest text-center">Engine Idle</p>
+              </div>
             )}
           </div>
         </div>
@@ -398,14 +410,22 @@ export function CropImageNode({ id, data, selected }: any) {
 
     const store = useWorkflowStore.getState();
     const incomingEdges = store.edges.filter((e) => e.target === id);
-    let imageUrl = data.image || '';
+    let imageUrl = data.imageUrl || '';
+    let x = data.cropX ?? 0;
+    let y = data.cropY ?? 0;
+    let w = data.cropW ?? 100;
+    let h = data.cropH ?? 100;
 
     incomingEdges.forEach((e) => {
       const srcNode = store.nodes.find((n) => n.id === e.source);
       if (!srcNode) return;
-      if (e.targetHandle === 'image') {
-        imageUrl = (srcNode.data.result || srcNode.data.imageUrl || imageUrl) as string;
-      }
+      const val = srcNode.data.result || srcNode.data.imageUrl || srcNode.data.text;
+      
+      if (e.targetHandle === 'image_url') imageUrl = val as string;
+      else if (e.targetHandle === 'x_percent') x = parseFloat(val as string) || x;
+      else if (e.targetHandle === 'y_percent') y = parseFloat(val as string) || y;
+      else if (e.targetHandle === 'width_percent') w = parseFloat(val as string) || w;
+      else if (e.targetHandle === 'height_percent') h = parseFloat(val as string) || h;
     });
 
     try {
@@ -414,10 +434,10 @@ export function CropImageNode({ id, data, selected }: any) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           imageUrl: imageUrl,
-          x: data.cropX ?? 0,
-          y: data.cropY ?? 0,
-          w: data.cropW ?? 100,
-          h: data.cropH ?? 100,
+          x: x,
+          y: y,
+          w: w,
+          h: h,
         }),
       });
       const { id: runId, error } = await res.json();
@@ -450,11 +470,11 @@ export function CropImageNode({ id, data, selected }: any) {
   }, [id, handleRun]);
 
   const statusConfig = {
-    idle: { color: 'text-zinc-500', icon: null },
-    queued: { color: 'text-yellow-400', icon: <Loader2 className="w-3 h-3 animate-spin" /> },
+    idle: { color: 'text-zinc-600', icon: null },
+    queued: { color: 'text-amber-400', icon: <Loader2 className="w-3 h-3 animate-spin" /> },
     running: { color: 'text-orange-400', icon: <Loader2 className="w-3 h-3 animate-spin" /> },
-    success: { color: 'text-green-400', icon: <Check className="w-3 h-3" /> },
-    failed: { color: 'text-red-400', icon: <AlertCircle className="w-3 h-3" /> },
+    success: { color: 'text-emerald-400', icon: <Check className="w-3 h-3" /> },
+    failed: { color: 'text-rose-400', icon: <AlertCircle className="w-3 h-3" /> },
   };
 
   const cropFields = [
@@ -470,13 +490,19 @@ export function CropImageNode({ id, data, selected }: any) {
       selected={selected}
       executing={nodeStatus === 'running'}
       icon={<Crop className="w-3.5 h-3.5 text-orange-400" />}
-      inputs={[{ id: 'image', label: 'Image' }]}
+      inputs={[
+        { id: 'image_url', label: 'Image' },
+        { id: 'x_percent', label: 'X %' },
+        { id: 'y_percent', label: 'Y %' },
+        { id: 'width_percent', label: 'W %' },
+        { id: 'height_percent', label: 'H %' }
+      ]}
       outputs={[{ id: 'output', label: 'Cropped' }]}
     >
-      <div className="space-y-3">
-        <div className="relative h-20 bg-zinc-950 border border-zinc-800 rounded-lg overflow-hidden">
+      <div className="space-y-4">
+        <div className="relative h-24 bg-black border border-white/5 rounded-2xl overflow-hidden shadow-inner ring-1 ring-white/[0.02]">
           <div 
-            className="absolute bg-orange-500/20 border border-orange-500/50 rounded-sm transition-all"
+            className="absolute bg-orange-500/10 border border-orange-500/50 rounded transition-all duration-500 shadow-[0_0_20px_rgba(249,115,22,0.15)]"
             style={{
               left: `${data.cropX ?? 0}%`,
               top: `${data.cropY ?? 0}%`,
@@ -484,8 +510,9 @@ export function CropImageNode({ id, data, selected }: any) {
               height: `${data.cropH ?? 100}%`,
             }}
           />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-[9px] text-zinc-600 font-bold uppercase">Crop Preview</span>
+          <div className="absolute inset-0 flex flex-col items-center justify-center opacity-20 group-hover:opacity-40 transition-opacity">
+             <Crop className="w-6 h-6 text-zinc-500 mb-1" />
+             <span className="text-[8px] text-zinc-600 font-black uppercase tracking-[0.2em]">Matrix View</span>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2">
@@ -495,39 +522,39 @@ export function CropImageNode({ id, data, selected }: any) {
                 <label className="text-[9px] font-bold text-zinc-600 tracking-widest uppercase">{field.label}</label>
                 <span className="text-[8px] text-zinc-700">{field.desc}</span>
               </div>
-              <div className="relative">
+              <div className="relative group/field">
                 <input 
                   type="number" 
                   min={0}
                   max={100}
                   value={data[field.key] ?? field.defaultVal}
                   onChange={(e) => handleValueChange(field.key, e.target.value)}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-[11px] text-zinc-300 focus:outline-none focus:border-orange-500 transition-colors pr-6 font-mono" 
+                  className="w-full bg-black/40 border border-white/5 rounded-xl px-3 py-2 text-[11px] text-zinc-200 focus:outline-none focus:border-orange-500/50 focus:bg-white/5 transition-all duration-300 pr-8 font-mono shadow-inner group-hover/field:border-white/10" 
                 />
-                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] text-zinc-600 font-bold">%</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] text-zinc-600 font-black">%</span>
               </div>
             </div>
           ))}
         </div>
-        <div className="flex gap-1.5">
+        <div className="flex gap-1.5 p-1 bg-white/[0.02] border border-white/5 rounded-xl">
           {[
             { label: 'Full', x: 0, y: 0, w: 100, h: 100 },
             { label: 'Center', x: 25, y: 25, w: 50, h: 50 },
-            { label: 'Top Half', x: 0, y: 0, w: 100, h: 50 },
+            { label: 'Top', x: 0, y: 0, w: 100, h: 50 },
           ].map((preset) => (
             <button
               key={preset.label}
               onClick={() => updateNode(id, { 
                 cropX: preset.x, cropY: preset.y, cropW: preset.w, cropH: preset.h 
               })}
-              className="flex-1 py-1 text-[9px] font-bold text-zinc-500 bg-zinc-900 border border-zinc-800 rounded-md hover:bg-zinc-800 hover:text-zinc-300 transition-colors uppercase tracking-wider"
+              className="flex-1 py-1 text-[9px] font-black tracking-widest text-zinc-500 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300 uppercase"
             >
               {preset.label}
             </button>
           ))}
         </div>
         <button 
-          className="w-full py-2 bg-orange-600 hover:bg-orange-500 text-white rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 mt-2"
+          className="w-full py-3 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white rounded-xl text-[11px] font-black uppercase tracking-[0.15em] transition-all duration-300 flex items-center justify-center gap-2 active:scale-[0.96] disabled:opacity-50 shadow-[0_10px_20px_rgba(249,115,22,0.15)]"
           disabled={nodeStatus === 'running'}
           onClick={handleRun}
         >
@@ -553,15 +580,20 @@ export function CropImageNode({ id, data, selected }: any) {
               </div>
             )}
           </div>
-          <div className="min-h-[60px] bg-zinc-950 border border-zinc-800 rounded-lg p-2.5 flex items-center justify-center overflow-hidden">
+          <div className="min-h-[80px] bg-black/40 border border-white/5 rounded-xl flex items-center justify-center overflow-hidden shadow-inner mt-1">
             {data.result ? (
               data.result.startsWith('data:image') ? (
-                <img src={data.result} alt="Cropped result" className="rounded-md max-h-32 object-contain" />
+                <div className="p-2 w-full h-full flex items-center justify-center">
+                  <img src={data.result} alt="Cropped result" className="rounded-lg max-h-40 object-contain shadow-2xl" />
+                </div>
               ) : (
-                <p className="text-xs text-red-400 leading-relaxed text-center p-2">{data.result}</p>
+                <p className="text-xs text-rose-400 font-medium leading-relaxed text-center p-4">{data.result}</p>
               )
             ) : (
-              <p className="text-zinc-700 italic text-[10px]">Result will appear here...</p>
+              <div className="flex flex-col items-center justify-center h-full py-4 opacity-30">
+                <ImageIcon className="w-5 h-5 text-zinc-600 mb-1" />
+                <p className="text-zinc-600 italic text-[10px] font-black uppercase tracking-[0.2em]">Ready</p>
+              </div>
             )}
           </div>
         </div>
@@ -581,14 +613,16 @@ export function ExtractFrameNode({ id, data, selected }: any) {
 
     const store = useWorkflowStore.getState();
     const incomingEdges = store.edges.filter((e) => e.target === id);
-    let videoUrl = data.video || '';
+    let videoUrl = data.videoUrl || '';
+    let timestamp = data.timestamp ?? 0;
 
     incomingEdges.forEach((e) => {
       const srcNode = store.nodes.find((n) => n.id === e.source);
       if (!srcNode) return;
-      if (e.targetHandle === 'video') {
-        videoUrl = (srcNode.data.result || srcNode.data.videoUrl || videoUrl) as string;
-      }
+      const val = srcNode.data.result || srcNode.data.videoUrl || srcNode.data.text;
+
+      if (e.targetHandle === 'video_url') videoUrl = val as string;
+      else if (e.targetHandle === 'timestamp') timestamp = val as any;
     });
 
     try {
@@ -597,8 +631,8 @@ export function ExtractFrameNode({ id, data, selected }: any) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           videoUrl: videoUrl,
-          timestamp: data.timestamp ?? 0,
-          timestampUnit: data.timestampUnit || 'sec',
+          timestamp: timestamp,
+          unit: data.timestampUnit || 'sec',
         }),
       });
       const { id: runId, error } = await res.json();
@@ -631,11 +665,11 @@ export function ExtractFrameNode({ id, data, selected }: any) {
   }, [id, handleRun]);
 
   const statusConfig = {
-    idle: { color: 'text-zinc-500', icon: null },
-    queued: { color: 'text-yellow-400', icon: <Loader2 className="w-3 h-3 animate-spin" /> },
+    idle: { color: 'text-zinc-600', icon: null },
+    queued: { color: 'text-amber-400', icon: <Loader2 className="w-3 h-3 animate-spin" /> },
     running: { color: 'text-cyan-400', icon: <Loader2 className="w-3 h-3 animate-spin" /> },
-    success: { color: 'text-green-400', icon: <Check className="w-3 h-3" /> },
-    failed: { color: 'text-red-400', icon: <AlertCircle className="w-3 h-3" /> },
+    success: { color: 'text-emerald-400', icon: <Check className="w-3 h-3" /> },
+    failed: { color: 'text-rose-400', icon: <AlertCircle className="w-3 h-3" /> },
   };
 
   return (
@@ -644,7 +678,10 @@ export function ExtractFrameNode({ id, data, selected }: any) {
       selected={selected}
       executing={nodeStatus === 'running'}
       icon={<Film className="w-3.5 h-3.5 text-cyan-400" />}
-      inputs={[{ id: 'video', label: 'Video' }]}
+      inputs={[
+        { id: 'video_url', label: 'Video' },
+        { id: 'timestamp', label: 'Time' }
+      ]}
       outputs={[{ id: 'output', label: 'Frame' }]}
     >
       <div className="space-y-3">
@@ -658,28 +695,31 @@ export function ExtractFrameNode({ id, data, selected }: any) {
               value={data.timestamp ?? 0}
               onChange={(e) => updateNode(id, { timestamp: parseFloat(e.target.value) || 0 })}
               placeholder="0.0"
-              className="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-2 text-xs text-zinc-300 font-mono focus:outline-none focus:border-cyan-500 transition-colors" 
+              className="flex-1 bg-black/40 border border-white/5 rounded-xl px-4 py-2.5 text-xs text-zinc-200 font-mono focus:outline-none focus:border-cyan-500/50 focus:bg-white/5 transition-all duration-300 shadow-inner" 
             />
-            <select 
-              value={data.timestampUnit || 'sec'}
-              onChange={(e) => updateNode(id, { timestampUnit: e.target.value })}
-              className="bg-zinc-950 border border-zinc-800 rounded-lg px-2 text-[10px] text-zinc-400 focus:outline-none focus:border-cyan-500 cursor-pointer"
-            >
-              <option value="sec">sec</option>
-              <option value="ms">ms</option>
-              <option value="pct">%</option>
-            </select>
+            <div className="relative min-w-[70px]">
+              <select 
+                value={data.timestampUnit || 'sec'}
+                onChange={(e) => updateNode(id, { timestampUnit: e.target.value })}
+                className="w-full h-full bg-white/[0.03] border border-white/5 rounded-xl px-3 text-[10px] text-zinc-500 font-black uppercase tracking-widest focus:outline-none focus:border-cyan-500/50 cursor-pointer appearance-none transition-all duration-300 hover:bg-white/10"
+              >
+                <option value="sec" className="bg-[#0c0a15]">sec</option>
+                <option value="ms" className="bg-[#0c0a15]">ms</option>
+                <option value="pct" className="bg-[#0c0a15]">%</option>
+              </select>
+              <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-600 pointer-events-none" />
+            </div>
           </div>
         </div>
-        <div className="flex gap-1.5">
+        <div className="flex gap-1.5 p-1 bg-white/[0.02] border border-white/5 rounded-xl">
           {[0, 1, 5, 10, 30].map((t) => (
             <button
               key={t}
               onClick={() => updateNode(id, { timestamp: t })}
-              className={`flex-1 py-1.5 text-[9px] font-bold rounded-md border transition-colors uppercase ${
+              className={`flex-1 py-1.5 text-[9px] font-black rounded-lg transition-all duration-300 uppercase tracking-widest ${
                 (data.timestamp ?? 0) === t 
-                  ? 'bg-cyan-500/20 border-cyan-500/40 text-cyan-400'
-                  : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300'
+                  ? 'bg-cyan-500/20 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.15)] ring-1 ring-cyan-500/30'
+                  : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'
               }`}
             >
               {t}s
@@ -687,7 +727,7 @@ export function ExtractFrameNode({ id, data, selected }: any) {
           ))}
         </div>
         <button 
-          className="w-full py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 mt-2"
+          className="w-full py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-xl text-[11px] font-black uppercase tracking-[0.15em] transition-all duration-300 flex items-center justify-center gap-2 active:scale-[0.96] disabled:opacity-50 shadow-[0_10px_20px_rgba(6,182,212,0.15)]"
           disabled={nodeStatus === 'running'}
           onClick={handleRun}
         >
@@ -713,17 +753,19 @@ export function ExtractFrameNode({ id, data, selected }: any) {
               </div>
             )}
           </div>
-          <div className="min-h-[80px] bg-zinc-950 border border-zinc-800 rounded-lg flex items-center justify-center overflow-hidden">
+          <div className="min-h-[100px] bg-black/40 border border-white/5 rounded-2xl flex items-center justify-center overflow-hidden shadow-inner mt-1">
             {data.result ? (
               data.result.startsWith('data:image') ? (
-                <img src={data.result} alt="Frame" className="w-full h-full object-cover rounded-lg" />
+                <div className="p-2 w-full h-full flex items-center justify-center group/res">
+                  <img src={data.result} alt="Frame" className="w-full h-full object-cover rounded-xl shadow-2xl transition-transform duration-700 group-hover/res:scale-105" />
+                </div>
               ) : (
-                <p className="text-xs text-red-400 leading-relaxed text-center p-2">{data.result}</p>
+                <p className="text-xs text-rose-400 font-medium leading-relaxed text-center p-4">{data.result}</p>
               )
             ) : (
-              <div className="text-center">
-                <Film className="w-5 h-5 text-zinc-800 mx-auto mb-1" />
-                <p className="text-[9px] text-zinc-700 font-medium">Result will appear here...</p>
+              <div className="flex flex-col items-center justify-center h-full py-6 opacity-30">
+                <Film className="w-6 h-6 text-zinc-600 mb-2" />
+                <p className="text-zinc-600 italic text-[10px] font-black uppercase tracking-[0.2em]">Ready to Roll</p>
               </div>
             )}
           </div>
