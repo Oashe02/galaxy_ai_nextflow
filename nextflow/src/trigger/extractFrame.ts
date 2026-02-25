@@ -14,10 +14,13 @@ export const extractFrameTask = task({
         const { videoUrl, timestamp, timestampUnit } = payload;
 
         let ffmpeg: typeof import("fluent-ffmpeg");
+        let ffmpegPath: string;
         try {
             ffmpeg = (await import("fluent-ffmpeg")).default;
-        } catch {
-            throw new Error("fluent-ffmpeg not installed — run: npm i fluent-ffmpeg @types/fluent-ffmpeg");
+            ffmpegPath = (await import("ffmpeg-static")).default as string;
+            ffmpeg.setFfmpegPath(ffmpegPath);
+        } catch (err) {
+            throw new Error("FFmpeg setup failed — ensure fluent-ffmpeg and ffmpeg-static are installed.");
         }
 
         let seekSec = timestamp;
