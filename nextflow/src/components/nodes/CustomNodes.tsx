@@ -228,7 +228,7 @@ export function LLMNode({ id, data, selected }: any) {
       if (!srcNode) return;
       
       const val = (srcNode.data.result || srcNode.data.imageUrl || srcNode.data.videoUrl || srcNode.data.text || '') as string;
-      const target = e.targetHandle?.toLowerCase() || '';
+      const target = (e.targetHandle || '').toLowerCase();
 
       if (target.includes('system')) sysPrompt = val;
       else if (target.includes('user') || target.includes('message') || target === 'prompt') userMsg = val;
@@ -249,8 +249,21 @@ export function LLMNode({ id, data, selected }: any) {
           images: images.length > 0 ? images : undefined,
         }),
       });
-      const { id: runId, error } = await res.json();
-      if (error) throw new Error(error);
+
+      if (res.status === 413) {
+        throw new Error("Payload too large (Vercel limit 4.5MB). Try smaller crops or lower resolution.");
+      }
+
+      const text = await res.text();
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch (err) {
+        throw new Error(`Server Error: ${text.substring(0, 100)}...`);
+      }
+
+      if (result.error) throw new Error(result.error);
+      const runId = result.id;
 
       // poll for result
       const poll = setInterval(async () => {
@@ -422,7 +435,7 @@ export function CropImageNode({ id, data, selected }: any) {
       if (!srcNode) return;
       const val = srcNode.data.result || srcNode.data.imageUrl || srcNode.data.videoUrl || srcNode.data.text;
       
-      const target = e.targetHandle?.toLowerCase() || '';
+      const target = (e.targetHandle || '').toLowerCase();
       if (target.includes('image')) imageUrl = val as string;
       else if (target.includes('x')) x = parseFloat(val as string) || x;
       else if (target.includes('y')) y = parseFloat(val as string) || y;
@@ -629,7 +642,7 @@ export function ExtractFrameNode({ id, data, selected }: any) {
       if (!srcNode) return;
       const val = srcNode.data.result || srcNode.data.videoUrl || srcNode.data.imageUrl || srcNode.data.text;
 
-      const target = e.targetHandle?.toLowerCase() || '';
+      const target = (e.targetHandle || '').toLowerCase();
       if (target.includes('video')) videoUrl = val as string;
       else if (target.includes('time') || target.includes('timestamp')) timestamp = val as any;
     });

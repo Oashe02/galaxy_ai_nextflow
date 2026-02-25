@@ -28,7 +28,7 @@ export const extractFrameTask = task({
 
         const tmpDir = os.tmpdir();
         const videoPath = path.join(tmpDir, `frame-input-${Date.now()}.mp4`);
-        const outputPath = path.join(tmpDir, `frame-output-${Date.now()}.png`);
+        const outputPath = path.join(tmpDir, `frame-output-${Date.now()}.jpg`);
 
         let vidBuf: Buffer;
 
@@ -54,6 +54,8 @@ export const extractFrameTask = task({
             ffmpeg(videoPath)
                 .seekInput(seekSec)
                 .frames(1)
+                .size("?x720") // Resize to 720p height to keep size small
+                .outputOptions("-q:v", "2") // High quality JPG
                 .output(outputPath)
                 .on("end", () => resolve())
                 .on("error", (err: Error) => reject(err))
@@ -67,7 +69,7 @@ export const extractFrameTask = task({
         await fs.unlink(outputPath).catch(() => { });
 
         return {
-            dataUrl: `data:image/png;base64,${b64}`,
+            dataUrl: `data:image/jpeg;base64,${b64}`,
             timestamp: seekSec,
         };
     },

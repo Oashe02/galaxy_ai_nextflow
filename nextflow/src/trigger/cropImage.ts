@@ -55,11 +55,11 @@ export const cropImageTask = task({
 
         const croppedBuf = await sharp(buf)
             .extract({ left: safeX, top: safeY, width: safeW, height: safeH })
-            .png()
+            .jpeg({ quality: 80 })
             .toBuffer();
         const b64 = croppedBuf.toString("base64");
         return {
-            dataUrl: `data:image/png;base64,${b64}`,
+            dataUrl: `data:image/jpeg;base64,${b64}`,
             width: safeW,
             height: safeH,
             originalWidth: imgW,
