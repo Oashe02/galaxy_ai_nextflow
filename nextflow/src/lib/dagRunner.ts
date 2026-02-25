@@ -155,9 +155,10 @@ export async function runDAG(
     await Promise.all(targetNodes.map(n => promises.get(n.id)));
 
     const totalDuration = Date.now() - startTime;
+    const executableResults = nodeResults.filter(r => EXECUTABLE_TYPES.has(r.nodeId.split('-')[0]) || EXECUTABLE_TYPES.has(r.name.toLowerCase())); // Rough check as we don't store full type in NodeResult
     const anyFailed = nodeResults.some(r => r.status === 'failed');
-    const allFailed = nodeResults.filter(r => EXECUTABLE_TYPES.has('')).every(r => r.status === 'failed');
-    const finalStatus = anyFailed ? (allFailed ? 'failed' : 'partial') : 'success';
+    const allSuccessful = nodeResults.every(r => r.status === 'success');
+    const finalStatus = allSuccessful ? 'success' : (anyFailed ? 'partial' : 'success'); // Simplified logic
 
     store.setRunning(false);
     store.patchMeta({ status: finalStatus === 'success' ? 'done' : 'error' });

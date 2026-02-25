@@ -421,7 +421,7 @@ export function CropImageNode({ id, data, selected }: any) {
       if (!srcNode) return;
       const val = srcNode.data.result || srcNode.data.imageUrl || srcNode.data.text;
       
-      if (e.targetHandle === 'image_url') imageUrl = val as string;
+      if (e.targetHandle === 'image') imageUrl = val as string;
       else if (e.targetHandle === 'x_percent') x = parseFloat(val as string) || x;
       else if (e.targetHandle === 'y_percent') y = parseFloat(val as string) || y;
       else if (e.targetHandle === 'width_percent') w = parseFloat(val as string) || w;
@@ -491,7 +491,7 @@ export function CropImageNode({ id, data, selected }: any) {
       executing={nodeStatus === 'running'}
       icon={<Crop className="w-3.5 h-3.5 text-orange-400" />}
       inputs={[
-        { id: 'image_url', label: 'Image' },
+        { id: 'image', label: 'Image' },
         { id: 'x_percent', label: 'X %' },
         { id: 'y_percent', label: 'Y %' },
         { id: 'width_percent', label: 'W %' },
@@ -621,7 +621,7 @@ export function ExtractFrameNode({ id, data, selected }: any) {
       if (!srcNode) return;
       const val = srcNode.data.result || srcNode.data.videoUrl || srcNode.data.text;
 
-      if (e.targetHandle === 'video_url') videoUrl = val as string;
+      if (e.targetHandle === 'video') videoUrl = val as string;
       else if (e.targetHandle === 'timestamp') timestamp = val as any;
     });
 
@@ -679,7 +679,7 @@ export function ExtractFrameNode({ id, data, selected }: any) {
       executing={nodeStatus === 'running'}
       icon={<Film className="w-3.5 h-3.5 text-cyan-400" />}
       inputs={[
-        { id: 'video_url', label: 'Video' },
+        { id: 'video', label: 'Video' },
         { id: 'timestamp', label: 'Time' }
       ]}
       outputs={[{ id: 'output', label: 'Frame' }]}
