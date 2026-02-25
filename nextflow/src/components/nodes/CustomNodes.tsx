@@ -228,14 +228,25 @@ export function LLMNode({ id, data, selected }: any) {
       if (!srcNode) return;
       
       const val = (srcNode.data.result || srcNode.data.imageUrl || srcNode.data.videoUrl || srcNode.data.text || '') as string;
+      const strVal = String(val);
       const target = (e.targetHandle || '').toLowerCase();
 
-      if (target.includes('system')) sysPrompt = val;
-      else if (target.includes('user') || target.includes('message') || target === 'prompt') userMsg = val;
-      else if (target.includes('image')) {
+      if (strVal.startsWith('data:image')) {
+        images.push(strVal);
+      } else if (target.includes('system')) {
+        sysPrompt = val;
+      } else if (target.includes('user') || target.includes('message') || target === 'prompt' || (strVal.length > 20 && !strVal.startsWith('data:'))) {
+        userMsg = val;
+      } else if (target.includes('image')) {
         if (val) images.push(val);
       }
     });
+
+    // Final sanity check: if we have no user message but have text inputs, use them
+    if (!userMsg && !images.length && sysPrompt) {
+        userMsg = sysPrompt;
+        sysPrompt = '';
+    }
 
     try {
       const res = await fetch('/api/run-llm', {
@@ -434,13 +445,16 @@ export function CropImageNode({ id, data, selected }: any) {
       const srcNode = store.nodes.find((n) => n.id === e.source);
       if (!srcNode) return;
       const val = srcNode.data.result || srcNode.data.imageUrl || srcNode.data.videoUrl || srcNode.data.text;
+      const strVal = String(val || '');
       
       const target = (e.targetHandle || '').toLowerCase();
-      if (target.includes('image')) imageUrl = val as string;
-      else if (target.includes('x')) x = parseFloat(val as string) || x;
-      else if (target.includes('y')) y = parseFloat(val as string) || y;
-      else if (target.includes('width') || target === 'w') w = parseFloat(val as string) || w;
-      else if (target.includes('height') || target === 'h') h = parseFloat(val as string) || h;
+      
+      if (strVal.startsWith('data:image') || target.includes('image')) {
+        imageUrl = strVal;
+      } else if (target.includes('x')) x = parseFloat(strVal) || x;
+      else if (target.includes('y')) y = parseFloat(strVal) || y;
+      else if (target.includes('width') || target === 'w') w = parseFloat(strVal) || w;
+      else if (target.includes('height') || target === 'h') h = parseFloat(strVal) || h;
     });
 
     if (!imageUrl) {
@@ -641,10 +655,15 @@ export function ExtractFrameNode({ id, data, selected }: any) {
       const srcNode = store.nodes.find((n) => n.id === e.source);
       if (!srcNode) return;
       const val = srcNode.data.result || srcNode.data.videoUrl || srcNode.data.imageUrl || srcNode.data.text;
+      const strVal = String(val || '');
 
       const target = (e.targetHandle || '').toLowerCase();
-      if (target.includes('video')) videoUrl = val as string;
-      else if (target.includes('time') || target.includes('timestamp')) timestamp = val as any;
+      
+      if (strVal.startsWith('data:video') || target.includes('video')) {
+        videoUrl = strVal;
+      } else if (target.includes('time') || target.includes('timestamp') || (!isNaN(parseFloat(strVal)) && strVal.length < 10)) {
+        timestamp = isNaN(parseFloat(strVal)) ? timestamp : parseFloat(strVal);
+      }
     });
 
     if (!videoUrl) {
